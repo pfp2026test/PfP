@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Secure Chat — Pins for Palestine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#121214;
+    --sidebar-bg: rgba(18,18,20,0.85);
+    --green:#007A3D;
+    --red:#CE1126;
+    --glass-border: rgba(255,255,255,0.09);
+    --glass-bg: rgba(255,255,255,0.03);
+    --text-dim: rgba(235,235,238,0.62);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{height:100%;overflow:hidden;}
+  body{background:var(--bg);color:#f2f2f3;font-family:'Plus Jakarta Sans', sans-serif;display:flex;}
+
+  .glow{position:fixed;border-radius:50%;filter:blur(120px);pointer-events:none;z-index:0;}
+  .glow-green{width:46vw;height:46vw;top:-14vw;left:-12vw;background:radial-gradient(circle, rgba(0,122,61,0.28) 0%, rgba(0,122,61,0) 70%);}
+  .glow-red{width:50vw;height:50vw;bottom:-18vw;right:-14vw;background:radial-gradient(circle, rgba(206,17,38,0.20) 0%, rgba(206,17,38,0) 70%);}
+
+  aside{
+    width:260px;height:100vh;background:var(--sidebar-bg);backdrop-filter:blur(18px);
+    border-right:1px solid var(--glass-border);display:flex;flex-direction:column;justify-content:space-between;padding:24px;z-index:10;
+  }
+  .sidebar-top{display:flex;flex-direction:column;gap:32px;}
+  .brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit;}
+  .brand-icon{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg, var(--green) 0%, var(--green) 45%, #ffffff 50%, var(--red) 55%, var(--red) 100%);}
+  .brand-title{font-family:'Space Grotesk', sans-serif;font-weight:600;font-size:13px;letter-spacing:0.12em;text-transform:uppercase;}
+  .nav-menu{display:flex;flex-direction:column;gap:8px;list-style:none;}
+  .nav-item a{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:8px;color:var(--text-dim);text-decoration:none;font-size:14px;font-weight:500;}
+  .nav-item a:hover,.nav-item a.active{background:rgba(255,255,255,0.06);color:#fff;}
+  .sidebar-bottom{border-top:1px solid var(--glass-border);padding-top:16px;}
+  .logout-btn{width:100%;background:transparent;border:1px solid var(--glass-border);color:var(--text-dim);padding:10px;border-radius:8px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;}
+  .logout-btn:hover{background:rgba(206,17,38,0.15);border-color:var(--red);color:#fff;}
+
+  /* CHAT LAYOUT */
+  main{flex:1;height:100vh;display:flex;padding:30px;gap:20px;z-index:2;position:relative;}
+  
+  .chat-sidebar{
+    width:280px;background:var(--glass-bg);border:1px solid var(--glass-border);backdrop-filter:blur(16px);border-radius:14px;
+    display:flex;flex-direction:column;overflow:hidden;
+  }
+  .chat-sidebar-header{padding:18px;border-bottom:1px solid var(--glass-border);font-family:'Space Grotesk', sans-serif;font-weight:600;font-size:14px;letter-spacing:0.05em;text-transform:uppercase;}
+  .chat-list{list-style:none;overflow-y:auto;flex:1;padding:8px;}
+  .chat-list-item{
+    padding:10px 14px;border-radius:8px;cursor:pointer;color:var(--text-dim);font-size:13.5px;font-weight:500;
+    transition:background .2s ease, color .2s ease;margin-bottom:4px;display:flex;align-items:center;gap:10px;
+  }
+  .chat-list-item:hover, .chat-list-item.active{background:rgba(255,255,255,0.06);color:#fff;}
+  .chat-list-section{font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-dim);padding:12px 14px 4px 14px;}
+
+  .chat-box{
+    flex:1;background:var(--glass-bg);border:1px solid var(--glass-border);backdrop-filter:blur(16px);border-radius:14px;
+    display:flex;flex-direction:column;overflow:hidden;
+  }
+  .chat-header{padding:18px 24px;border-bottom:1px solid var(--glass-border);background:rgba(0,0,0,0.15);}
+  .chat-title{font-family:'Space Grotesk', sans-serif;font-size:1.1rem;font-weight:600;}
+  
+  .messages{flex:1;padding:24px;overflow-y:auto;display:flex;flex-direction:column;gap:12px;}
+  .message{background:rgba(255,255,255,0.05);border:1px solid var(--glass-border);padding:12px 16px;border-radius:10px;max-width:70%;}
+  .message .user{font-size:12px;color:var(--green);font-weight:600;margin-bottom:4px;}
+  .message .text{font-size:14px;color:#f2f2f3;}
+
+  .chat-input-area{padding:16px 24px;border-top:1px solid var(--glass-border);display:flex;gap:12px;background:rgba(0,0,0,0.2);}
+  .form-control{flex:1;background:rgba(255,255,255,0.05);border:1px solid var(--glass-border);border-radius:8px;padding:12px;color:#fff;font-size:14px;outline:none;}
+  .btn{background:linear-gradient(135deg, #E31730 0%, var(--red) 55%, #A50E1F 100%);color:#fff;border:none;padding:0 24px;border-radius:8px;font-weight:600;cursor:pointer;}
+</style>
+</head>
+<body>
+  <div class="glow glow-green"></div>
+  <div class="glow glow-red"></div>
+
+  <aside>
+    <div class="sidebar-top">
+      <a href="dashboard.html" class="brand"><div class="brand-icon"></div><span class="brand-title">Staff Portal</span></a>
+      <ul class="nav-menu">
+        <li class="nav-item"><a href="dashboard.html">🏠 Dashboard</a></li>
+        <li class="nav-item"><a href="user-management.html">👥 User Management</a></li>
+        <li class="nav-item"><a href="chat.html" class="active">💬 Secure Chat</a></li>
+      </ul>
+    </div>
+    <div class="sidebar-bottom"><a href="employee-login.html" class="logout-btn">Sign Out</a></div>
+  </aside>
+
+  <main>
+    <div class="chat-sidebar">
+      <div class="chat-sidebar-header">Conversations</div>
+      <ul class="chat-list" id="chatSelectionList">
+        <li class="chat-list-item active" onclick="switchChat('gc', 'Pins for Palestine')">
+          📢 Pins for Palestine (GC)
+        </li>
+        <div class="chat-list-section">Direct Messages</div>
+        </ul>
+    </div>
+
+    <div class="chat-box">
+      <div class="chat-header">
+        <div class="chat-title" id="activeChatTitle">Pins for Palestine</div>
+      </div>
+      <div class="messages" id="messageContainer"></div>
+      <form class="chat-input-area" onsubmit="sendMessage(event)">
+        <input type="text" id="chatInput" class="form-control" placeholder="Type a message..." required>
+        <button type="submit" class="btn">Send</button>
+      </form>
+    </div>
+  </main>
+
+  <script>
+    let currentChatId = 'gc';
+    let currentChatName = 'Pins for Palestine';
+
+    function getUsers() {
+      return JSON.parse(localStorage.getItem('pfp_users') || '["pfpadmin"]');
+    }
+
+    function renderChatSidebar() {
+      const listEl = document.getElementById('chatSelectionList');
+      // Keep GC item, rebuild direct messages
+      let html = `<li class="chat-list-item ${currentChatId === 'gc' ? 'active' : ''}" onclick="switchChat('gc', 'Pins for Palestine')">📢 Pins for Palestine (GC)</li>`;
+      html += `<div class="chat-list-section">Direct Messages</div>`;
+
+      const users = getUsers();
+      users.forEach(user => {
+        if(user !== 'pfpadmin') { // Assuming current admin is pfpadmin
+          const dmId = `dm_${user}`;
+          html += `<li class="chat-list-item ${currentChatId === dmId ? 'active' : ''}" onclick="switchChat('${dmId}', 'DM: ${user}')">💬 ${user}</li>`;
+        }
+      });
+      listEl.innerHTML = html;
+    }
+
+    function switchChat(id, name) {
+      currentChatId = id;
+      currentChatName = name;
+      document.getElementById('activeChatTitle').textContent = name;
+      renderChatSidebar();
+      renderMessages();
+    }
+
+    function getMessages() {
+      const allMessages = JSON.parse(localStorage.getItem('pfp_all_messages') || '{}');
+      if(!allMessages[currentChatId]) {
+        allMessages[currentChatId] = currentChatId === 'gc' 
+          ? [{user: "pfpadmin", text: "Welcome to the official campaign group chat!"}]
+          : [{user: "System", text: `Secure DM channel initialized with ${currentChatName}`}];
+        localStorage.setItem('pfp_all_messages', JSON.stringify(allMessages));
+      }
+      return allMessages[currentChatId];
+    }
+
+    function renderMessages() {
+      const msgs = getMessages();
+      const container = document.getElementById('messageContainer');
+      container.innerHTML = '';
+      msgs.forEach(m => {
+        const div = document.createElement('div');
+        div.className = 'message';
+        div.innerHTML = `<div class="user">${m.user}</div><div class="text">${m.text}</div>`;
+        container.appendChild(div);
+      });
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function sendMessage(e) {
+      e.preventDefault();
+      const input = document.getElementById('chatInput');
+      const text = input.value.trim();
+      if(!text) return;
+
+      const allMessages = JSON.parse(localStorage.getItem('pfp_all_messages') || '{}');
+      if(!allMessages[currentChatId]) allMessages[currentChatId] = [];
+
+      allMessages[currentChatId].push({ user: "pfpadmin", text: text });
+      localStorage.setItem('pfp_all_messages', JSON.stringify(allMessages));
+      input.value = '';
+      renderMessages();
+    }
+
+    renderChatSidebar();
+    renderMessages();
+  </script>
+</body>
+</html>
