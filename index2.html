@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pins for Palestine — Coming Soon</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#121214;
+    --green:#007A3D;
+    --red:#CE1126;
+    --glass-border: rgba(255,255,255,0.09);
+    --glass-bg: rgba(255,255,255,0.03);
+    --text-dim: rgba(235,235,238,0.62);
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+
+  html,body{
+    height:100%;
+    overflow:hidden;
+  }
+
+  body{
+    background:var(--bg);
+    color:#f2f2f3;
+    font-family:'Plus Jakarta Sans', sans-serif;
+    position:relative;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* Ambient glows */
+  .glow{
+    position:fixed;
+    border-radius:50%;
+    filter:blur(120px);
+    pointer-events:none;
+    z-index:0;
+  }
+  .glow-green{
+    width:46vw;height:46vw;
+    top:-14vw; left:-12vw;
+    background:radial-gradient(circle, rgba(0,122,61,0.38) 0%, rgba(0,122,61,0) 70%);
+  }
+  .glow-red{
+    width:50vw;height:50vw;
+    bottom:-18vw; right:-14vw;
+    background:radial-gradient(circle, rgba(206,17,38,0.30) 0%, rgba(206,17,38,0) 70%);
+  }
+  .glow-center{
+    width:60vw;height:36vw;
+    top:50%; left:50%;
+    transform:translate(-50%,-50%);
+    background:radial-gradient(circle, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 70%);
+  }
+
+  /* NAV */
+  nav{
+    position:fixed;
+    top:0; left:0; right:0;
+    z-index:10;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:18px 40px;
+    background:rgba(18,18,20,0.55);
+    backdrop-filter:blur(18px) saturate(140%);
+    -webkit-backdrop-filter:blur(18px) saturate(140%);
+    border-bottom:1px solid var(--glass-border);
+  }
+
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    text-decoration:none;
+    color:inherit;
+  }
+
+  .brand-icon{
+    width:34px;
+    height:34px;
+    border-radius:9px;
+    position:relative;
+    background:
+      linear-gradient(135deg, var(--green) 0%, var(--green) 45%, #ffffff 50%, var(--red) 55%, var(--red) 100%);
+    box-shadow:0 0 0 1px rgba(255,255,255,0.12) inset, 0 4px 14px rgba(0,0,0,0.4);
+    flex-shrink:0;
+  }
+  .brand-icon::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    border-radius:9px;
+    background:
+      linear-gradient(140deg, rgba(255,255,255,0.18), rgba(255,255,255,0) 40%);
+  }
+
+  .brand-title{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:600;
+    font-size:15px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    white-space:nowrap;
+  }
+
+  .nav-right{
+    display:flex;
+    align-items:center;
+    gap:28px;
+  }
+
+  .nav-links{
+    display:flex;
+    gap:26px;
+    list-style:none;
+  }
+  .nav-links a{
+    color:var(--text-dim);
+    text-decoration:none;
+    font-size:13.5px;
+    font-weight:500;
+    letter-spacing:0.01em;
+    transition:color .2s ease;
+    white-space:nowrap;
+  }
+  .nav-links a:hover{ color:#fff; }
+
+  .nav-buttons{
+    display:flex;
+    gap:10px;
+  }
+
+  .btn{
+    font-family:'Plus Jakarta Sans', sans-serif;
+    font-size:13px;
+    font-weight:600;
+    letter-spacing:0.02em;
+    padding:9px 18px;
+    border-radius:8px;
+    text-decoration:none;
+    white-space:nowrap;
+    transition:transform .18s ease, box-shadow .18s ease, background .18s ease, border-color .18s ease;
+    display:inline-flex;
+    align-items:center;
+  }
+
+  .btn-ghost{
+    color:#f2f2f3;
+    background:var(--glass-bg);
+    border:1px solid var(--glass-border);
+    backdrop-filter:blur(10px);
+  }
+  .btn-ghost:hover{
+    border-color:rgba(255,255,255,0.24);
+    background:rgba(255,255,255,0.07);
+  }
+
+  .btn-primary{
+    color:#fff;
+    background:linear-gradient(135deg, #E31730 0%, var(--red) 55%, #A50E1F 100%);
+    border:1px solid rgba(255,255,255,0.14);
+    box-shadow:0 4px 18px rgba(206,17,38,0.35);
+  }
+  .btn-primary:hover{
+    transform:translateY(-1px);
+    box-shadow:0 6px 24px rgba(206,17,38,0.5);
+  }
+
+  /* HERO */
+  .hero{
+    position:relative;
+    z-index:2;
+    height:100vh;
+    width:100vw;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:0 24px;
+  }
+
+  .eyebrow{
+    font-family:'Plus Jakarta Sans', sans-serif;
+    font-size:12.5px;
+    font-weight:600;
+    letter-spacing:0.28em;
+    text-transform:uppercase;
+    color:rgba(235,235,238,0.55);
+    margin-bottom:26px;
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    padding:8px 18px;
+    border:1px solid var(--glass-border);
+    border-radius:999px;
+    background:var(--glass-bg);
+    backdrop-filter:blur(10px);
+  }
+
+  .eyebrow .dot{
+    width:7px;height:7px;
+    border-radius:50%;
+    background:linear-gradient(135deg, var(--green), var(--red));
+    box-shadow:0 0 10px rgba(0,122,61,0.6);
+  }
+
+  .headline{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;
+    font-size:clamp(3.2rem, 10vw, 9rem);
+    line-height:0.95;
+    letter-spacing:-0.02em;
+    text-transform:uppercase;
+    background:linear-gradient(100deg, var(--green) 0%, #6fd39a 22%, #ffffff 50%, #f08a95 78%, var(--red) 100%);
+    background-size:220% 100%;
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    animation:shift 8s ease-in-out infinite;
+    filter:drop-shadow(0 0 40px rgba(255,255,255,0.06));
+  }
+
+  @keyframes shift{
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .subtext{
+    margin-top:30px;
+    max-width:560px;
+    font-weight:300;
+    font-size:16.5px;
+    line-height:1.75;
+    color:var(--text-dim);
+    letter-spacing:0.005em;
+  }
+
+  .subtext strong{
+    color:rgba(242,242,243,0.88);
+    font-weight:500;
+  }
+
+  .divider{
+    width:44px;
+    height:1px;
+    margin:34px 0;
+    background:linear-gradient(90deg, var(--green), var(--red));
+    opacity:0.6;
+  }
+
+  @media (max-width: 900px){
+    .nav-links{ display:none; }
+    nav{ padding:16px 20px; }
+    .btn{ padding:8px 14px; font-size:12px; }
+  }
+
+  @media (max-width: 560px){
+    .brand-title{ font-size:12px; letter-spacing:0.1em; }
+    .nav-buttons .btn-ghost{ display:none; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .headline{ animation:none; background-position:50% 50%; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="glow glow-green"></div>
+  <div class="glow glow-red"></div>
+  <div class="glow glow-center"></div>
+
+  <nav>
+    <a href="index.html" class="brand">
+      <div class="brand-icon" aria-hidden="true"></div>
+      <span class="brand-title">Pins for Palestine</span>
+    </a>
+    <div class="nav-right">
+      <ul class="nav-links">
+        <li><a href="our-mission.html">Our Mission</a></li>
+        <li><a href="orders-and-products.html">Orders &amp; Products</a></li>
+        <li><a href="campaign-impact.html">Campaign Impact</a></li>
+      </ul>
+      <div class="nav-buttons">
+        <a class="btn btn-ghost" href="https://sites.google.com/view/pinsforpalestine26/employee-login">Employee Login</a>
+        <a class="btn btn-primary" href="https://sites.google.com/view/pinsforpalestine26/request-pins">Request Pins</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="hero">
+    <div class="eyebrow"><span class="dot"></span> Campaign Relaunch In Progress</div>
+    <h1 class="headline">Coming<br>Soon</h1>
+    <div class="divider"></div>
+    <p class="subtext">
+      Our material collection is being refreshed and restocked. <strong>Physical pin toolkits</strong>
+      will be available shortly — thank you for your patience while we prepare
+      the next chapter of the campaign.
+    </p>
+  </main>
+
+</body>
+</html>
