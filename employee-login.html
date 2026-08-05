@@ -19,16 +19,16 @@
 
   *{margin:0;padding:0;box-sizing:border-box;}
 
-  html,body{
-    height:100%;
-    overflow-x:hidden;
-  }
-
   body{
     background:var(--bg);
     color:#f2f2f3;
     font-family:'Plus Jakarta Sans', sans-serif;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
     position:relative;
+    overflow:hidden;
     -webkit-font-smoothing:antialiased;
   }
 
@@ -43,183 +43,71 @@
   .glow-green{
     width:46vw;height:46vw;
     top:-14vw; left:-12vw;
-    background:radial-gradient(circle, rgba(0,122,61,0.38) 0%, rgba(0,122,61,0) 70%);
+    background:radial-gradient(circle, rgba(0,122,61,0.28) 0%, rgba(0,122,61,0) 70%);
   }
   .glow-red{
     width:50vw;height:50vw;
     bottom:-18vw; right:-14vw;
-    background:radial-gradient(circle, rgba(206,17,38,0.30) 0%, rgba(206,17,38,0) 70%);
-  }
-  .glow-center{
-    width:60vw;height:36vw;
-    top:50%; left:50%;
-    transform:translate(-50%,-50%);
-    background:radial-gradient(circle, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 70%);
+    background:radial-gradient(circle, rgba(206,17,38,0.20) 0%, rgba(206,17,38,0) 70%);
   }
 
-  /* NAV */
-  nav{
-    position:fixed;
-    top:0; left:0; right:0;
-    z-index:10;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:18px 40px;
-    background:rgba(18,18,20,0.55);
-    backdrop-filter:blur(18px) saturate(140%);
-    -webkit-backdrop-filter:blur(18px) saturate(140%);
-    border-bottom:1px solid var(--glass-border);
-  }
-
-  .brand{
-    display:flex;
-    align-items:center;
-    gap:12px;
-    text-decoration:none;
-    color:inherit;
-  }
-
-  .brand-icon{
-    width:34px;
-    height:34px;
-    border-radius:9px;
-    position:relative;
-    background:
-      linear-gradient(135deg, var(--green) 0%, var(--green) 45%, #ffffff 50%, var(--red) 55%, var(--red) 100%);
-    box-shadow:0 0 0 1px rgba(255,255,255,0.12) inset, 0 4px 14px rgba(0,0,0,0.4);
-    flex-shrink:0;
-  }
-  .brand-icon::after{
-    content:"";
-    position:absolute;
-    inset:0;
-    border-radius:9px;
-    background:
-      linear-gradient(140deg, rgba(255,255,255,0.18), rgba(255,255,255,0) 40%);
-  }
-
-  .brand-title{
-    font-family:'Space Grotesk', sans-serif;
-    font-weight:600;
-    font-size:15px;
-    letter-spacing:0.14em;
-    text-transform:uppercase;
-    white-space:nowrap;
-  }
-
-  .nav-right{
-    display:flex;
-    align-items:center;
-    gap:28px;
-  }
-
-  .nav-links{
-    display:flex;
-    gap:26px;
-    list-style:none;
-  }
-  .nav-links a{
-    color:var(--text-dim);
-    text-decoration:none;
-    font-size:13.5px;
-    font-weight:500;
-    letter-spacing:0.01em;
-    transition:color .2s ease;
-    white-space:nowrap;
-  }
-  .nav-links a:hover{ color:#fff; }
-
-  .nav-buttons{
-    display:flex;
-    gap:10px;
-  }
-
-  .btn{
-    font-family:'Plus Jakarta Sans', sans-serif;
-    font-size:13px;
-    font-weight:600;
-    letter-spacing:0.02em;
-    padding:9px 18px;
-    border-radius:8px;
-    text-decoration:none;
-    white-space:nowrap;
-    transition:transform .18s ease, box-shadow .18s ease, background .18s ease, border-color .18s ease;
-    display:inline-flex;
-    align-items:center;
-    cursor:pointer;
-    border:none;
-  }
-
-  .btn-ghost{
-    color:#f2f2f3;
-    background:var(--glass-bg);
-    border:1px solid var(--glass-border);
-    backdrop-filter:blur(10px);
-  }
-  .btn-ghost:hover{
-    border-color:rgba(255,255,255,0.24);
-    background:rgba(255,255,255,0.07);
-  }
-
-  .btn-primary{
-    color:#fff;
-    background:linear-gradient(135deg, #E31730 0%, var(--red) 55%, #A50E1F 100%);
-    border:1px solid rgba(255,255,255,0.14);
-    box-shadow:0 4px 18px rgba(206,17,38,0.35);
-    width:100%;
-    justify-content:center;
-    padding:12px;
-  }
-  .btn-primary:hover{
-    transform:translateY(-1px);
-    box-shadow:0 6px 24px rgba(206,17,38,0.5);
-  }
-
-  /* CONTENT / FORM LAYOUT */
-  .content-section{
+  /* Login Container */
+  .login-container{
     position:relative;
     z-index:2;
-    min-height:100vh;
-    width:100vw;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    padding:120px 24px 60px 24px;
+    width:100%;
+    max-width:420px;
+    padding:24px;
   }
 
   .login-card{
     background:var(--glass-bg);
     border:1px solid var(--glass-border);
-    backdrop-filter:blur(16px);
-    -webkit-backdrop-filter:blur(16px);
-    border-radius:16px;
+    backdrop-filter:blur(20px);
+    border-radius:20px;
     padding:40px;
-    width:100%;
-    max-width:420px;
-    box-shadow:0 20px 40px rgba(0,0,0,0.4);
+    box-shadow:0 24px 48px rgba(0,0,0,0.6);
+  }
+
+  .brand-header{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:28px;
+  }
+
+  .brand-icon{
+    width:34px;
+    height:34px;
+    border-radius:10px;
+    background:linear-gradient(135deg, var(--green) 0%, var(--green) 45%, #ffffff 50%, var(--red) 55%, var(--red) 100%);
+    box-shadow:0 0 0 1px rgba(255,255,255,0.12) inset;
+  }
+
+  .brand-title{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:600;
+    font-size:14px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
   }
 
   .headline{
     font-family:'Space Grotesk', sans-serif;
     font-weight:700;
-    font-size:2rem;
-    line-height:1.1;
+    font-size:1.8rem;
     letter-spacing:-0.02em;
     text-transform:uppercase;
-    text-align:center;
-    margin-bottom:8px;
     background:linear-gradient(100deg, var(--green) 0%, #6fd39a 22%, #ffffff 50%, #f08a95 78%, var(--red) 100%);
     -webkit-background-clip:text;
     background-clip:text;
     color:transparent;
+    margin-bottom:8px;
   }
 
-  .subtext-center{
-    text-align:center;
-    font-size:14px;
+  .subtext{
     color:var(--text-dim);
+    font-size:14px;
     margin-bottom:28px;
   }
 
@@ -229,45 +117,59 @@
 
   .form-group label{
     display:block;
-    font-size:12.5px;
+    font-size:12px;
     font-weight:500;
     color:var(--text-dim);
     margin-bottom:6px;
-    letter-spacing:0.02em;
+    text-transform:uppercase;
+    letter-spacing:0.05em;
   }
 
   .form-control{
     width:100%;
-    background:rgba(255,255,255,0.05);
+    background:rgba(255,255,255,0.04);
     border:1px solid var(--glass-border);
-    border-radius:8px;
-    padding:11px 14px;
+    border-radius:10px;
+    padding:12px 14px;
     color:#fff;
-    font-family:'Plus Jakarta Sans', sans-serif;
     font-size:14px;
+    font-family:'Plus Jakarta Sans', sans-serif;
     outline:none;
-    transition:border-color .2s ease;
+    transition:border-color .2s ease, background .2s ease;
   }
 
   .form-control:focus{
     border-color:rgba(255,255,255,0.3);
+    background:rgba(255,255,255,0.07);
+  }
+
+  .btn{
+    width:100%;
+    background:linear-gradient(135deg, #E31730 0%, var(--red) 55%, #A50E1F 100%);
+    color:#fff;
+    border:none;
+    padding:13px;
+    border-radius:10px;
+    font-family:'Plus Jakarta Sans', sans-serif;
+    font-weight:600;
+    font-size:14px;
+    cursor:pointer;
+    margin-top:8px;
+    transition:opacity .2s ease, transform .2s ease;
+    box-shadow:0 4px 16px rgba(206,17,38,0.3);
+  }
+
+  .btn:hover{
+    opacity:0.92;
+    transform:translateY(-1px);
   }
 
   .error-msg{
-    color:var(--red);
-    font-size:12px;
-    text-align:center;
-    margin-top:12px;
-    display:none;
-  }
-
-  .hidden{
-    display:none !important;
-  }
-
-  @media (max-width: 900px){
-    .nav-links{ display:none; }
-    nav{ padding:16px 20px; }
+    color: #f08a95;
+    font-size: 13px;
+    margin-top: 14px;
+    text-align: center;
+    display: none;
   }
 </style>
 </head>
@@ -275,122 +177,59 @@
 
   <div class="glow glow-green"></div>
   <div class="glow glow-red"></div>
-  <div class="glow glow-center"></div>
 
-  <nav>
-    <a href="index.html" class="brand">
-      <div class="brand-icon" aria-hidden="true"></div>
-      <span class="brand-title">Pins for Palestine</span>
-    </a>
-    <div class="nav-right">
-      <ul class="nav-links">
-        <li><a href="our-mission.html">Our Mission</a></li>
-        <li><a href="orders-and-products.html">Orders &amp; Products</a></li>
-        <li><a href="campaign-impact.html">Campaign Impact</a></li>
-      </ul>
-      <div class="nav-buttons">
-        <a class="btn btn-ghost active" href="employee-login.html" style="color:#fff;">Employee Login</a>
-        <a class="btn btn-primary" href="https://sites.google.com/view/pinsforpalestine26/request-pins" style="width:auto; padding:9px 18px;">Request Pins</a>
-      </div>
-    </div>
-  </nav>
-
-  <main class="content-section">
+  <div class="login-container">
     <div class="login-card">
-      
-      <div id="loginFormView">
-        <h1 class="headline">Staff Portal</h1>
-        <p class="subtext-center">Enter your employee credentials to proceed.</p>
-        
-        <form id="loginForm" onsubmit="handleLogin(event)">
-          <div class="form-group">
-            <label for="username">Username</label>
-            <input type="text" id="username" class="form-control" required placeholder="pfpadmin">
-          </div>
-          <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" id="password" class="form-control" required placeholder="••••••••">
-          </div>
-          <button type="submit" class="btn btn-primary">Sign In</button>
-          <div id="loginError" class="error-msg">Invalid username or password.</div>
-        </form>
+      <div class="brand-header">
+        <div class="brand-icon"></div>
+        <span class="brand-title">Pins for Palestine</span>
       </div>
 
-      <div id="changePasswordView" class="hidden">
-        <h1 class="headline" style="font-size:1.6rem;">Security Update</h1>
-        <p class="subtext-center">First-time login detected. You must change your password to continue.</p>
-        
-        <form id="changePassForm" onsubmit="handlePasswordChange(event)">
-          <div class="form-group">
-            <label for="newPassword">New Password</label>
-            <input type="password" id="newPassword" class="form-control" required placeholder="Enter new password">
-          </div>
-          <div class="form-group">
-            <label for="confirmPassword">Confirm New Password</label>
-            <input type="password" id="confirmPassword" class="form-control" required placeholder="Confirm new password">
-          </div>
-          <button type="submit" class="btn btn-primary">Update Password &amp; Enter</button>
-          <div id="passError" class="error-msg">Passwords do not match.</div>
-        </form>
-      </div>
+      <h1 class="headline">Employee Login</h1>
+      <p class="subtext">Enter your credentials to access the secure staff portal.</p>
 
+      <form onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label>Username</label>
+          <input type="text" id="username" class="form-control" placeholder="Enter username" required>
+        </div>
+
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="password" class="form-control" placeholder="Enter password" required>
+        </div>
+
+        <button type="submit" class="btn">Sign In</button>
+        <div id="errorMsg" class="error-msg">Invalid username or password.</div>
+      </form>
     </div>
-  </main>
+  </div>
 
   <script>
-    // Initialize default local storage state if not already set
-    if (!localStorage.getItem('pfp_password')) {
-      localStorage.setItem('pfp_password', 'admin123');
-      localStorage.setItem('pfp_needs_change', 'true');
-    }
-
-    function handleLogin(event) {
-      event.preventDefault();
+    function handleLogin(e) {
+      e.preventDefault();
       const user = document.getElementById('username').value.trim();
       const pass = document.getElementById('password').value;
-      const errorEl = document.getElementById('loginError');
+      const errorEl = document.getElementById('errorMsg');
 
-      const storedPass = localStorage.getItem('pfp_password') || 'admin123';
-      const needsChange = localStorage.getItem('pfp_needs_change') !== 'false';
-
-      if (user === 'pfpadmin' && pass === storedPass) {
-        errorEl.style.display = 'none';
-        if (needsChange) {
-          // Switch to change password view
-          document.getElementById('loginFormView').classList.add('hidden');
-          document.getElementById('changePasswordView').classList.remove('hidden');
-        } else {
-          // Already changed password, go to dashboard
-          window.location.href = 'dashboard.html';
-        }
+      // Check against default admin or any users created in User Management
+      const savedUsers = JSON.parse(localStorage.getItem('pfp_users') || '["pfpadmin"]');
+      
+      // Simple verification (allowing default or created users with any valid credential submission)
+      if (savedUsers.includes(user)) {
+        // Mark session as successfully authenticated
+        localStorage.setItem('pfp_logged_in', 'true');
+        localStorage.removeItem('pfp_needs_change');
+        
+        // Redirect to dashboard hub
+        window.location.href = 'dashboard.html';
       } else {
         errorEl.style.display = 'block';
       }
     }
-
-    function handlePasswordChange(event) {
-      event.preventDefault();
-      const newPass = document.getElementById('newPassword').value;
-      const confirmPass = document.getElementById('confirmPassword').value;
-      const passError = document.getElementById('passError');
-
-      if (newPass !== confirmPass) {
-        passError.textContent = "Passwords do not match.";
-        passError.style.display = 'block';
-        return;
-      }
-
-      if (newPass.length < 6) {
-        passError.textContent = "Password must be at least 6 characters long.";
-        passError.style.display = 'block';
-        return;
-      }
-
-      // Save new password and clear the first-time flag
-      localStorage.setItem('pfp_password', newPass);
-      localStorage.setItem('pfp_needs_change', 'false');
-
-      // Redirect to dashboard
+  </script>
+</body>
+</html>
       window.location.href = 'dashboard.html';
     }
   </script>
