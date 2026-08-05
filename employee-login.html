@@ -118,64 +118,28 @@
   </main>
 
   <script>
-    if (localStorage.getItem('pfp_needs_change') === 'true' || localStorage.getItem('pfp_logged_in') !== 'true') {
-      document.getElementById('blockedScreen').classList.remove('hidden');
-    }
-
-    function getUsers() {
-      return JSON.parse(localStorage.getItem('pfp_users') || '["pfpadmin"]');
-    }
-
-    function getUserCredentials() {
-      return JSON.parse(localStorage.getItem('pfp_user_credentials') || '{"pfpadmin": "admin123"}');
-    }
-
-    function renderUsers() {
-      const users = getUsers();
-      const tbody = document.getElementById('userTableBody');
-      tbody.innerHTML = '';
-      users.forEach(user => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${user}</td><td>${user !== 'pfpadmin' ? `<button class="del-btn" onclick="deleteUser('${user}')">Delete</button>` : '<span style="color:var(--text-dim);font-size:12px;">Admin Root</span>'}</td>`;
-        tbody.appendChild(tr);
-      });
-    }
-
-    function addUser(e) {
+    function handleLogin(e) {
       e.preventDefault();
-      const u = document.getElementById('newUsername').value.trim();
-      const p = document.getElementById('newPassword').value;
+      const user = document.getElementById('username').value.trim();
+      const pass = document.getElementById('password').value;
+      const errorEl = document.getElementById('errorMsg');
+
+      // Fetch saved team member credentials database
+      const creds = JSON.parse(localStorage.getItem('pfp_user_credentials') || '{"pfpadmin": "admin123"}');
       
-      let users = getUsers();
-      let creds = getUserCredentials();
-
-      if(!users.includes(u)){
-        users.push(u);
-        creds[u] = p; // Save password mapped to the username
+      // Verify username and password match
+      if (creds[user] && creds[user] === pass) {
+        // Successfully set the login flags required by dashboard, user management, and chat
+        localStorage.setItem('pfp_logged_in', 'true');
+        localStorage.setItem('pfp_current_user', user);
+        localStorage.removeItem('pfp_needs_change');
         
-        localStorage.setItem('pfp_users', JSON.stringify(users));
-        localStorage.setItem('pfp_user_credentials', JSON.stringify(creds));
-
-        document.getElementById('newUsername').value = '';
-        document.getElementById('newPassword').value = '';
-        renderUsers();
-        alert('Account created successfully!');
+        // Redirect into the main application hub
+        window.location.href = 'dashboard.html';
       } else {
-        alert('User already exists!');
+        errorEl.style.display = 'block';
       }
     }
-
-    function deleteUser(u) {
-      let users = getUsers().filter(user => user !== u);
-      let creds = getUserCredentials();
-      delete creds[u];
-
-      localStorage.setItem('pfp_users', JSON.stringify(users));
-      localStorage.setItem('pfp_user_credentials', JSON.stringify(creds));
-      renderUsers();
-    }
-
-    renderUsers();
   </script>
 </body>
 </html>
