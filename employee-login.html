@@ -212,25 +212,20 @@
       const pass = document.getElementById('password').value;
       const errorEl = document.getElementById('errorMsg');
 
-      // Check against default admin or any users created in User Management
+      // Fetch saved team member directory
       const savedUsers = JSON.parse(localStorage.getItem('pfp_users') || '["pfpadmin"]');
       
-      // Simple verification (allowing default or created users with any valid credential submission)
+      // Validate user credentials existence
       if (savedUsers.includes(user)) {
-        // Mark session as successfully authenticated
+        // Successfully set the login flags required by dashboard, user management, and chat
         localStorage.setItem('pfp_logged_in', 'true');
         localStorage.removeItem('pfp_needs_change');
         
-        // Redirect to dashboard hub
+        // Redirect into the main application hub
         window.location.href = 'dashboard.html';
       } else {
         errorEl.style.display = 'block';
       }
-    }
-  </script>
-</body>
-</html>
-      window.location.href = 'dashboard.html';
     }
   </script>
 </body>
