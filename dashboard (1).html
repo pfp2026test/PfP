@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — Pins for Palestine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#121214; --green:#007A3D; --red:#CE1126;
+    --glass-border: rgba(255,255,255,0.09);
+    --glass-bg: rgba(255,255,255,0.03);
+    --text-dim: rgba(235,235,238,0.62);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    min-height:100vh; background:var(--bg); color:#f2f2f3; font-family:'Plus Jakarta Sans', sans-serif;
+    -webkit-font-smoothing:antialiased; position:relative;
+  }
+  .glow{position:fixed;border-radius:50%;filter:blur(120px);pointer-events:none;z-index:0;}
+  .glow-green{width:46vw;height:46vw;top:-14vw;left:-12vw;background:radial-gradient(circle, rgba(0,122,61,0.28) 0%, rgba(0,122,61,0) 70%);}
+  .glow-red{width:50vw;height:50vw;bottom:-18vw;right:-14vw;background:radial-gradient(circle, rgba(206,17,38,0.22) 0%, rgba(206,17,38,0) 70%);}
+
+  nav{
+    position:sticky; top:0; z-index:10; display:flex; align-items:center; justify-content:space-between;
+    padding:18px 40px; background:rgba(18,18,20,0.55); backdrop-filter:blur(18px) saturate(140%);
+    -webkit-backdrop-filter:blur(18px) saturate(140%); border-bottom:1px solid var(--glass-border);
+  }
+  .brand{ display:flex; align-items:center; gap:12px; }
+  .brand-icon{
+    width:30px;height:30px;border-radius:8px;
+    background:linear-gradient(135deg, var(--green) 0%, var(--green) 45%, #ffffff 50%, var(--red) 55%, var(--red) 100%);
+    box-shadow:0 0 0 1px rgba(255,255,255,0.12) inset;
+  }
+  .brand-title{ font-family:'Space Grotesk', sans-serif; font-weight:600; font-size:14px; letter-spacing:0.1em; text-transform:uppercase; }
+  #logoutBtn{
+    font-family:'Plus Jakarta Sans', sans-serif; font-size:13px; font-weight:600; padding:9px 16px;
+    border-radius:8px; color:#f2f2f3; background:var(--glass-bg); border:1px solid var(--glass-border);
+    cursor:pointer; transition:border-color .18s ease, background .18s ease;
+  }
+  #logoutBtn:hover{ border-color:rgba(255,255,255,0.24); background:rgba(255,255,255,0.07); }
+
+  main{
+    position:relative; z-index:2; max-width:800px; margin:0 auto; padding:72px 24px;
+  }
+  .eyebrow{
+    font-size:12.5px; font-weight:600; letter-spacing:0.2em; text-transform:uppercase;
+    color:var(--text-dim); margin-bottom:14px;
+  }
+  h1{
+    font-family:'Space Grotesk', sans-serif; font-weight:700; font-size:clamp(2rem, 5vw, 3rem);
+    letter-spacing:-0.01em; margin-bottom:16px;
+  }
+  #welcome{ color:var(--text-dim); font-size:15px; margin-bottom:40px; }
+
+  .grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:16px; }
+  .tile{
+    padding:24px; border-radius:14px; background:var(--glass-bg); border:1px solid var(--glass-border);
+    backdrop-filter:blur(14px);
+  }
+  .tile h2{ font-family:'Space Grotesk', sans-serif; font-size:15px; font-weight:600; margin-bottom:8px; }
+  .tile p{ font-size:13.5px; color:var(--text-dim); line-height:1.6; }
+</style>
+</head>
+<body>
+  <div class="glow glow-green"></div>
+  <div class="glow glow-red"></div>
+
+  <nav>
+    <div class="brand">
+      <div class="brand-icon"></div>
+      <span class="brand-title">Pins for Palestine — Staff</span>
+    </div>
+    <button id="logoutBtn">Log Out</button>
+  </nav>
+
+  <main>
+    <p class="eyebrow">Internal</p>
+    <h1>Dashboard</h1>
+    <p id="welcome">Loading…</p>
+
+    <div class="grid">
+      <div class="tile">
+        <h2>Pin Requests</h2>
+        <p>Review incoming requests submitted through the public form.</p>
+      </div>
+      <div class="tile">
+        <h2>Inventory</h2>
+        <p>Track current stock of pin toolkits and materials.</p>
+      </div>
+      <div class="tile">
+        <h2>Campaign Impact</h2>
+        <p>Update the numbers shown on the public-facing impact page.</p>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    (async () => {
+      try {
+        const res = await fetch('/api/session');
+        if (!res.ok) { window.location.href = '/employee-login.html'; return; }
+        const data = await res.json();
+        if (data.mustChangePassword) { window.location.href = '/change-password.html'; return; }
+        document.getElementById('welcome').textContent = 'Signed in as ' + data.username + '.';
+      } catch {
+        window.location.href = '/employee-login.html';
+      }
+    })();
+
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      try { await fetch('/api/logout', { method: 'POST' }); } catch {}
+      window.location.href = '/employee-login.html';
+    });
+  </script>
+</body>
+</html>

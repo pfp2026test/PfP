@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Employee Login — Pins for Palestine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#121214;
+    --green:#007A3D;
+    --red:#CE1126;
+    --glass-border: rgba(255,255,255,0.09);
+    --glass-bg: rgba(255,255,255,0.03);
+    --text-dim: rgba(235,235,238,0.62);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{height:100%;overflow:hidden;}
+  body{
+    background:var(--bg);
+    color:#f2f2f3;
+    font-family:'Plus Jakarta Sans', sans-serif;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+    -webkit-font-smoothing:antialiased;
+  }
+  .glow{position:fixed;border-radius:50%;filter:blur(120px);pointer-events:none;z-index:0;}
+  .glow-green{width:46vw;height:46vw;top:-14vw;left:-12vw;background:radial-gradient(circle, rgba(0,122,61,0.32) 0%, rgba(0,122,61,0) 70%);}
+  .glow-red{width:50vw;height:50vw;bottom:-18vw;right:-14vw;background:radial-gradient(circle, rgba(206,17,38,0.26) 0%, rgba(206,17,38,0) 70%);}
+
+  .card{
+    position:relative;
+    z-index:2;
+    width:100%;
+    max-width:400px;
+    padding:40px 36px;
+    border-radius:16px;
+    background:var(--glass-bg);
+    border:1px solid var(--glass-border);
+    backdrop-filter:blur(18px) saturate(140%);
+    -webkit-backdrop-filter:blur(18px) saturate(140%);
+    box-shadow:0 20px 60px rgba(0,0,0,0.45);
+    margin:20px;
+  }
+
+  .brand-icon{
+    width:34px;height:34px;border-radius:9px;
+    background:linear-gradient(135deg, var(--green) 0%, var(--green) 45%, #ffffff 50%, var(--red) 55%, var(--red) 100%);
+    box-shadow:0 0 0 1px rgba(255,255,255,0.12) inset, 0 4px 14px rgba(0,0,0,0.4);
+    margin-bottom:22px;
+  }
+
+  h1{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:600;
+    font-size:22px;
+    letter-spacing:-0.01em;
+    margin-bottom:6px;
+  }
+
+  .sub{
+    font-size:13.5px;
+    color:var(--text-dim);
+    margin-bottom:28px;
+    line-height:1.5;
+  }
+
+  label{
+    display:block;
+    font-size:12.5px;
+    font-weight:500;
+    letter-spacing:0.03em;
+    text-transform:uppercase;
+    color:var(--text-dim);
+    margin-bottom:8px;
+  }
+
+  .field{ margin-bottom:18px; }
+
+  input{
+    width:100%;
+    padding:12px 14px;
+    border-radius:8px;
+    background:rgba(255,255,255,0.04);
+    border:1px solid var(--glass-border);
+    color:#f2f2f3;
+    font-family:'Plus Jakarta Sans', sans-serif;
+    font-size:14.5px;
+    outline:none;
+    transition:border-color .18s ease, background .18s ease;
+  }
+  input::placeholder{ color:rgba(235,235,238,0.32); }
+  input:focus{
+    border-color:rgba(0,122,61,0.6);
+    background:rgba(255,255,255,0.06);
+    box-shadow:0 0 0 3px rgba(0,122,61,0.15);
+  }
+
+  button{
+    width:100%;
+    margin-top:6px;
+    padding:12px 18px;
+    border-radius:8px;
+    border:1px solid rgba(255,255,255,0.14);
+    background:linear-gradient(135deg, #E31730 0%, var(--red) 55%, #A50E1F 100%);
+    color:#fff;
+    font-family:'Plus Jakarta Sans', sans-serif;
+    font-size:14.5px;
+    font-weight:600;
+    letter-spacing:0.02em;
+    cursor:pointer;
+    box-shadow:0 4px 18px rgba(206,17,38,0.3);
+    transition:transform .18s ease, box-shadow .18s ease;
+  }
+  button:hover{ transform:translateY(-1px); box-shadow:0 6px 24px rgba(206,17,38,0.45); }
+  button:disabled{ opacity:0.6; cursor:not-allowed; transform:none; }
+
+  .error{
+    display:none;
+    margin-bottom:18px;
+    padding:10px 14px;
+    border-radius:8px;
+    background:rgba(206,17,38,0.1);
+    border:1px solid rgba(206,17,38,0.35);
+    color:#ff9aa5;
+    font-size:13px;
+    line-height:1.5;
+  }
+  .error.visible{ display:block; }
+
+  .back{
+    display:inline-block;
+    margin-top:22px;
+    font-size:12.5px;
+    color:var(--text-dim);
+    text-decoration:none;
+  }
+  .back:hover{ color:#fff; }
+</style>
+</head>
+<body>
+  <div class="glow glow-green"></div>
+  <div class="glow glow-red"></div>
+
+  <div class="card">
+    <div class="brand-icon" aria-hidden="true"></div>
+    <h1>Employee Login</h1>
+    <p class="sub">Sign in with your Pins for Palestine account.</p>
+
+    <div class="error" id="errorBox"></div>
+
+    <form id="loginForm">
+      <div class="field">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" autocomplete="username" required>
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" autocomplete="current-password" required>
+      </div>
+      <button type="submit" id="submitBtn">Sign In</button>
+    </form>
+
+    <a class="back" href="/">← Back to home</a>
+  </div>
+
+  <script>
+    const form = document.getElementById('loginForm');
+    const errorBox = document.getElementById('errorBox');
+    const submitBtn = document.getElementById('submitBtn');
+
+    function showError(message) {
+      errorBox.textContent = message;
+      errorBox.classList.add('visible');
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorBox.classList.remove('visible');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Signing in…';
+
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+
+      try {
+        const res = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password }),
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          showError(data.error || 'Something went wrong. Please try again.');
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Sign In';
+          return;
+        }
+
+        window.location.href = data.mustChangePassword ? '/change-password.html' : '/dashboard.html';
+      } catch (err) {
+        showError('Could not reach the server. Please try again.');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Sign In';
+      }
+    });
+  </script>
+</body>
+</html>
