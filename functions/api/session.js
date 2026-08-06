@@ -16,4 +16,4 @@ export async function onRequestGet(context) {
     username: sessionUser.username,
     mustChangePassword: !!sessionUser.must_change_password,
   });
-}
+} 
