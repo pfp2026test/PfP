@@ -12,4 +12,4 @@ export async function onRequestPost(context) {
     { ok: true },
     { headers: { 'Set-Cookie': clearCookieHeader() } }
   );
-} 
+}
