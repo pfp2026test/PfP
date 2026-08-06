@@ -26,5 +26,5 @@ export async function onRequest(context) {
 
   // Authenticated and password is current — let the static file through.
   return next();
-}
+} 
 
