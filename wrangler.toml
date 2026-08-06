@@ -1,8 +1,3 @@
 name = "pins-for-palestine"
-pages_build_output_dir = "public"
+pages_build_output_dir = "."
 compatibility_date = "2025-01-01"
-
-[[d1_databases]]
-binding = "DB"
-database_name = "pfp-auth"
-database_id = "REPLACE_WITH_YOUR_DATABASE_ID"
