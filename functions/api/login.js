@@ -1,4 +1,4 @@
-import { verifyPassword, createSession, sessionCookieHeader, json } from '../_lib/auth.js';
+import { verifyPassword, hashPassword, createSession, sessionCookieHeader, json } from '../_lib/auth.js';
 
 // POST /api/login  { username, password }
 export async function onRequestPost(context) {
@@ -30,12 +30,22 @@ export async function onRequestPost(context) {
       .first();
 
     if (!user) {
-      return json({ error: 'Invalid username or password.' }, { status: 401 });
+      return json({ error: 'DEBUG: no user row found for username="' + username + '"' }, { status: 401 });
     }
+
+    const computedHash = await hashPassword(password, user.password_salt);
 
     const valid = await verifyPassword(password, user.password_salt, user.password_hash);
     if (!valid) {
-      return json({ error: 'Invalid username or password.' }, { status: 401 });
+      return json(
+        {
+          error: 'DEBUG: password mismatch',
+          storedHashStart: user.password_hash.slice(0, 12),
+          computedHashStart: computedHash.slice(0, 12),
+          saltUsed: user.password_salt,
+        },
+        { status: 401 }
+      );
     }
 
     const session = await createSession(db, user.id);
