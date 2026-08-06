@@ -1,3 +1,8 @@
 name = "pins-for-palestine"
 pages_build_output_dir = "."
 compatibility_date = "2025-01-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "pfp-auth"
+database_id = "a39c38f3-58e7-4066-81ae-f7f6061c64be"
