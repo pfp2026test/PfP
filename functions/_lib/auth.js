@@ -48,7 +48,6 @@ async function hashPassword(password, saltHex) {
 
 async function verifyPassword(password, saltHex, expectedHashHex) {
   const computed = await hashPassword(password, saltHex);
-  // Constant-time-ish comparison
   if (computed.length !== expectedHashHex.length) return false;
   let mismatch = 0;
   for (let i = 0; i < computed.length; i++) {
@@ -58,11 +57,11 @@ async function verifyPassword(password, saltHex, expectedHashHex) {
 }
 
 function newSalt() {
-  return randomHex(16); // 16 bytes -> 32 hex chars
+  return randomHex(16);
 }
 
 function newSessionId() {
-  return randomHex(32); // 32 bytes -> 64 hex chars
+  return randomHex(32);
 }
 
 async function createSession(db, userId) {
@@ -79,7 +78,7 @@ async function getSessionUser(db, sessionId) {
   if (!sessionId) return null;
   const row = await db
     .prepare(
-      `SELECT users.id, users.username, users.must_change_password, sessions.expires_at
+      `SELECT users.id, users.username, users.must_change_password, users.is_admin, sessions.expires_at
        FROM sessions JOIN users ON users.id = sessions.user_id
        WHERE sessions.id = ?`
     )
@@ -91,6 +90,25 @@ async function getSessionUser(db, sessionId) {
     return null;
   }
   return row;
+}
+
+async function requireAdmin(db, request) {
+  const sessionId = getCookie(request, 'pfp_session');
+  const user = await getSessionUser(db, sessionId);
+  if (!user) return { error: json({ error: 'Not authenticated.' }, { status: 401 }) };
+  if (!user.is_admin) return { error: json({ error: 'Admin access required.' }, { status: 403 }) };
+  return { user };
+}
+
+function generateTempPassword() {
+  const chars = 'ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
+  const bytes = new Uint8Array(12);
+  crypto.getRandomValues(bytes);
+  let out = '';
+  for (let i = 0; i < bytes.length; i++) {
+    out += chars[bytes[i] % chars.length];
+  }
+  return out;
 }
 
 async function destroySession(db, sessionId) {
@@ -131,4 +149,6 @@ export {
   sessionCookieHeader,
   clearCookieHeader,
   json,
+  requireAdmin,
+  generateTempPassword,
 };
