@@ -3,6 +3,9 @@ pages_build_output_dir = "."
 compatibility_date = "2025-01-01"
 keep_vars = true
 
+[vars]
+JIRA_CLIENT_ID = "PZpkvPG2sY4HpJdyusjHfurkJL14aC6Z"
+
 [[d1_databases]]
 binding = "DB"
 database_name = "pfp-auth"
