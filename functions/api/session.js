@@ -15,5 +15,6 @@ export async function onRequestGet(context) {
   return json({
     username: sessionUser.username,
     mustChangePassword: !!sessionUser.must_change_password,
+    isAdmin: !!sessionUser.is_admin,
   });
-} 
+}
