@@ -129,6 +129,27 @@
   }
 
   #userMgmtSection{ display:none; }
+
+  .task-row{
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    padding:12px 0; border-bottom:1px solid rgba(255,255,255,0.04);
+  }
+  .task-row:last-child{ border-bottom:none; }
+  .task-key{ font-family:'Space Grotesk', sans-serif; font-size:12px; font-weight:600; color:var(--text-dim); white-space:nowrap; }
+  .task-summary{ flex:1; font-size:13.5px; color:#f2f2f3; }
+  .task-summary a{ color:inherit; text-decoration:none; }
+  .task-summary a:hover{ text-decoration:underline; }
+  .task-status{
+    font-size:11px; font-weight:600; padding:3px 9px; border-radius:999px; white-space:nowrap;
+    background:rgba(255,255,255,0.06); border:1px solid var(--glass-border); color:var(--text-dim);
+  }
+  .connect-btn{
+    padding:10px 20px; border-radius:8px; border:1px solid rgba(255,255,255,0.14);
+    background:linear-gradient(135deg, #E31730 0%, var(--red) 55%, #A50E1F 100%); color:#fff;
+    font-family:'Plus Jakarta Sans', sans-serif; font-size:13.5px; font-weight:600; cursor:pointer;
+    text-decoration:none; display:inline-block;
+  }
+  .disconnect-link{ font-size:12px; color:var(--text-dim); background:none; border:none; cursor:pointer; text-decoration:underline; padding:0; margin-top:14px; }
 </style>
 </head>
 <body>
@@ -162,6 +183,38 @@
         <p>Update the numbers shown on the public-facing impact page.</p>
       </div>
     </div>
+
+    <section id="tasksSection" class="panel">
+      <h2>My Tasks</h2>
+      <p class="sub" id="tasksSub">Loading…</p>
+      <div id="tasksContent"></div>
+    </section>
+
+    <section class="panel">
+      <h2>My Tasks</h2>
+      <p class="sub" id="tasksSub">Loading…</p>
+
+      <div id="tasksNotConnected" style="display:none;">
+        <button class="add-btn" id="connectJiraBtn">Connect Jira Account</button>
+      </div>
+
+      <div id="tasksConnected" style="display:none;">
+        <table id="tasksTable">
+          <thead>
+            <tr>
+              <th>Key</th>
+              <th>Summary</th>
+              <th>Status</th>
+              <th>Priority</th>
+            </tr>
+          </thead>
+          <tbody id="tasksTbody"></tbody>
+        </table>
+        <button class="del-btn" id="disconnectJiraBtn">Disconnect Jira</button>
+      </div>
+
+      <div class="msg" id="tasksMsg"></div>
+    </section>
 
     <section id="userMgmtSection" class="panel">
       <h2>User Management</h2>
@@ -199,13 +252,88 @@
   </main>
 
   <script>
-    let currentUserId = null;
-
     function escapeHtml(str) {
       const div = document.createElement('div');
       div.textContent = str;
       return div.innerHTML;
     }
+
+    async function loadTasks() {
+      const sub = document.getElementById('tasksSub');
+      const notConnected = document.getElementById('tasksNotConnected');
+      const connected = document.getElementById('tasksConnected');
+      const tbody = document.getElementById('tasksTbody');
+
+      try {
+        const res = await fetch('/api/jira/tasks');
+        const data = await res.json();
+
+        if (!data.connected) {
+          sub.textContent = data.error || 'Connect your Jira account to see tasks assigned to you here.';
+          notConnected.style.display = 'block';
+          connected.style.display = 'none';
+          return;
+        }
+
+        notConnected.style.display = 'none';
+        connected.style.display = 'block';
+
+        if (data.error) {
+          sub.textContent = data.error;
+        } else if (!data.issues || data.issues.length === 0) {
+          sub.textContent = 'Nothing assigned to you right now.';
+        } else {
+          sub.textContent = data.issues.length + ' open item' + (data.issues.length === 1 ? '' : 's') + ' assigned to you.';
+        }
+
+        tbody.innerHTML = (data.issues || []).map(issue => {
+          const link = issue.url
+            ? `<a href="${escapeHtml(issue.url)}" target="_blank" rel="noopener" style="color:#8be3af;">${escapeHtml(issue.key)}</a>`
+            : escapeHtml(issue.key);
+          return `<tr>
+            <td>${link}</td>
+            <td>${escapeHtml(issue.summary || '')}</td>
+            <td>${escapeHtml(issue.status || '—')}</td>
+            <td>${escapeHtml(issue.priority || '—')}</td>
+          </tr>`;
+        }).join('');
+      } catch {
+        sub.textContent = 'Could not reach the server.';
+      }
+    }
+
+    document.getElementById('connectJiraBtn').addEventListener('click', () => {
+      window.location.href = '/api/jira/connect';
+    });
+
+    document.getElementById('disconnectJiraBtn').addEventListener('click', async () => {
+      if (!confirm('Disconnect your Jira account? You can reconnect any time.')) return;
+      try {
+        await fetch('/api/jira/disconnect', { method: 'POST' });
+        loadTasks();
+      } catch {
+        alert('Could not reach the server.');
+      }
+    });
+
+    (function showJiraUrlMessages() {
+      const params = new URLSearchParams(window.location.search);
+      const msg = document.getElementById('tasksMsg');
+      if (params.get('jira_connected')) {
+        msg.textContent = 'Jira account connected successfully.';
+        msg.className = 'msg msg-success visible';
+      } else if (params.get('jira_error')) {
+        msg.textContent = 'Could not connect Jira account (' + params.get('jira_error') + '). Please try again.';
+        msg.className = 'msg msg-error visible';
+      }
+      if (params.get('jira_connected') || params.get('jira_error')) {
+        window.history.replaceState({}, '', window.location.pathname);
+      }
+    })();
+
+    loadTasks();
+
+    let currentUserId = null;
 
     async function loadUsers() {
       const tbody = document.getElementById('usersTbody');
@@ -302,6 +430,54 @@
         btn.textContent = 'Add Employee';
       }
     });
+
+    async function loadTasks() {
+      const sub = document.getElementById('tasksSub');
+      const content = document.getElementById('tasksContent');
+      const params = new URLSearchParams(window.location.search);
+
+      if (params.get('jira_connected')) {
+        history.replaceState(null, '', window.location.pathname);
+      }
+      if (params.get('jira_error')) {
+        sub.textContent = 'Connection failed (' + params.get('jira_error') + '). Please try again.';
+        history.replaceState(null, '', window.location.pathname);
+      }
+
+      try {
+        const res = await fetch('/api/jira/tasks');
+        const data = await res.json();
+
+        if (!data.connected) {
+          sub.textContent = data.error || 'Connect your Jira account to see your assigned tasks here.';
+          content.innerHTML = '<a class="connect-btn" href="/api/jira/connect">Connect Jira Account</a>';
+          return;
+        }
+
+        sub.textContent = data.issues.length + ' open issue' + (data.issues.length === 1 ? '' : 's') + ' assigned to you.';
+
+        if (data.issues.length === 0) {
+          content.innerHTML = '<p style="color:var(--text-dim); font-size:13.5px;">No open issues assigned to you right now.</p>';
+        } else {
+          content.innerHTML = data.issues.map(t => `
+            <div class="task-row">
+              <span class="task-key">${escapeHtml(t.key)}</span>
+              <span class="task-summary">${t.url ? `<a href="${escapeHtml(t.url)}" target="_blank" rel="noopener">${escapeHtml(t.summary)}</a>` : escapeHtml(t.summary)}</span>
+              <span class="task-status">${escapeHtml(t.status || '')}</span>
+            </div>
+          `).join('');
+        }
+
+        content.innerHTML += '<button class="disconnect-link" id="disconnectJiraBtn">Disconnect Jira account</button>';
+        document.getElementById('disconnectJiraBtn').addEventListener('click', async () => {
+          if (!confirm('Disconnect your Jira account?')) return;
+          await fetch('/api/jira/disconnect', { method: 'POST' });
+          loadTasks();
+        });
+      } catch (err) {
+        sub.textContent = 'Could not load tasks right now.';
+      }
+    }
 
     (async () => {
       try {
