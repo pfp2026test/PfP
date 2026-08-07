@@ -49,6 +49,6 @@ export async function onRequestGet(context) {
     }));
     return json({ connected: true, issues });
   } catch (err) {
-    return json({ connected: true, issues: [], error: 'Could not load issues from Jira.' });
-  }
+    return json({ connected: true, issues: [], error: 'DEBUG: ' + (err && err.message ? err.message : String(err)) });
+  }  }
 }
