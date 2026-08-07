@@ -425,54 +425,6 @@
       }
     });
 
-    async function loadTasks() {
-      const sub = document.getElementById('tasksSub');
-      const content = document.getElementById('tasksContent');
-      const params = new URLSearchParams(window.location.search);
-
-      if (params.get('jira_connected')) {
-        history.replaceState(null, '', window.location.pathname);
-      }
-      if (params.get('jira_error')) {
-        sub.textContent = 'Connection failed (' + params.get('jira_error') + '). Please try again.';
-        history.replaceState(null, '', window.location.pathname);
-      }
-
-      try {
-        const res = await fetch('/api/jira/tasks');
-        const data = await res.json();
-
-        if (!data.connected) {
-          sub.textContent = data.error || 'Connect your Jira account to see your assigned tasks here.';
-          content.innerHTML = '<a class="connect-btn" href="/api/jira/connect">Connect Jira Account</a>';
-          return;
-        }
-
-        sub.textContent = data.issues.length + ' open issue' + (data.issues.length === 1 ? '' : 's') + ' assigned to you.';
-
-        if (data.issues.length === 0) {
-          content.innerHTML = '<p style="color:var(--text-dim); font-size:13.5px;">No open issues assigned to you right now.</p>';
-        } else {
-          content.innerHTML = data.issues.map(t => `
-            <div class="task-row">
-              <span class="task-key">${escapeHtml(t.key)}</span>
-              <span class="task-summary">${t.url ? `<a href="${escapeHtml(t.url)}" target="_blank" rel="noopener">${escapeHtml(t.summary)}</a>` : escapeHtml(t.summary)}</span>
-              <span class="task-status">${escapeHtml(t.status || '')}</span>
-            </div>
-          `).join('');
-        }
-
-        content.innerHTML += '<button class="disconnect-link" id="disconnectJiraBtn">Disconnect Jira account</button>';
-        document.getElementById('disconnectJiraBtn').addEventListener('click', async () => {
-          if (!confirm('Disconnect your Jira account?')) return;
-          await fetch('/api/jira/disconnect', { method: 'POST' });
-          loadTasks();
-        });
-      } catch (err) {
-        sub.textContent = 'Could not load tasks right now.';
-      }
-    }
-
     (async () => {
       try {
         const res = await fetch('/api/session');
