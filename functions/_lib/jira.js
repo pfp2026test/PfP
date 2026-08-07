@@ -60,7 +60,7 @@ async function getAccessibleResources(accessToken) {
 }
 
 async function getCurrentUser(accessToken, cloudId) {
-  const res = await fetch(`https://api.atlassian.com/ex/jira/${cloudId}/rest/api/3/myself`, {
+  const res = await fetch(``https://api.atlassian.com/ex/jira/${cloudId}/rest/api/3/search/jql?jql=${jql}&maxResults=50&fields=summary,status,priority,issuetype,updated`,`, {
     headers: { Authorization: 'Bearer ' + accessToken, Accept: 'application/json' },
   });
   if (!res.ok) throw new Error('Could not fetch Jira user');
