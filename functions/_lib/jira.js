@@ -11,7 +11,7 @@ function buildAuthorizeUrl(clientId, state) {
     prompt: 'consent',
     state,
   });
-  return `https://auth.atlassian.com/authorize?${params.toString()}`;
+  return 'https://auth.atlassian.com/authorize?' + params.toString();
 }
 
 async function exchangeCodeForToken(clientId, clientSecret, code) {
@@ -60,7 +60,8 @@ async function getAccessibleResources(accessToken) {
 }
 
 async function getCurrentUser(accessToken, cloudId) {
-  const res = await fetch(``https://api.atlassian.com/ex/jira/${cloudId}/rest/api/3/search/jql?jql=${jql}&maxResults=50&fields=summary,status,priority,issuetype,updated`,`, {
+  const url = 'https://api.atlassian.com/ex/jira/' + cloudId + '/rest/api/3/myself';
+  const res = await fetch(url, {
     headers: { Authorization: 'Bearer ' + accessToken, Accept: 'application/json' },
   });
   if (!res.ok) throw new Error('Could not fetch Jira user');
@@ -69,10 +70,10 @@ async function getCurrentUser(accessToken, cloudId) {
 
 async function searchAssignedIssues(accessToken, cloudId) {
   const jql = encodeURIComponent('assignee = currentUser() AND statusCategory != Done ORDER BY updated DESC');
-  const res = await fetch(
-    `https://api.atlassian.com/ex/jira/${cloudId}/rest/api/3/search?jql=${jql}&maxResults=50&fields=summary,status,priority,issuetype,updated`,
-    { headers: { Authorization: 'Bearer ' + accessToken, Accept: 'application/json' } }
-  );
+  const url = 'https://api.atlassian.com/ex/jira/' + cloudId + '/rest/api/3/search/jql?jql=' + jql + '&maxResults=50&fields=summary,status,priority,issuetype,updated';
+  const res = await fetch(url, {
+    headers: { Authorization: 'Bearer ' + accessToken, Accept: 'application/json' },
+  });
   if (!res.ok) {
     const text = await res.text();
     throw new Error('Issue search failed: ' + text.slice(0, 300));
