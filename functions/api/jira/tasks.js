@@ -45,10 +45,10 @@ export async function onRequestGet(context) {
       priority: issue.fields.priority ? issue.fields.priority.name : null,
       type: issue.fields.issuetype ? issue.fields.issuetype.name : null,
       updated: issue.fields.updated,
-      url: conn.site_url ? `${conn.site_url}/browse/${issue.key}` : null,
+      url: conn.site_url ? (conn.site_url + '/browse/' + issue.key) : null,
     }));
     return json({ connected: true, issues });
   } catch (err) {
     return json({ connected: true, issues: [], error: 'DEBUG: ' + (err && err.message ? err.message : String(err)) });
-  }  }
+  }
 }
