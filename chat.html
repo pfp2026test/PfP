@@ -7,53 +7,22 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/shell.css">
 <style>
-  :root{
-    --bg:#121214; --green:#007A3D; --red:#CE1126;
-    --glass-border: rgba(255,255,255,0.09);
-    --glass-bg: rgba(255,255,255,0.03);
-    --text-dim: rgba(235,235,238,0.62);
-  }
-  *{margin:0;padding:0;box-sizing:border-box;}
-  html,body{height:100%;overflow:hidden;}
-  body{
-    background:var(--bg); color:#f2f2f3; font-family:'Plus Jakarta Sans', sans-serif;
-    -webkit-font-smoothing:antialiased; display:flex; flex-direction:column;
-  }
-  nav{
-    display:flex; align-items:center; justify-content:space-between; padding:14px 24px;
-    background:rgba(18,18,20,0.6); backdrop-filter:blur(18px); border-bottom:1px solid var(--glass-border);
-    flex-shrink:0;
-  }
-  .brand{ display:flex; align-items:center; gap:10px; }
-  .brand-icon{
-    width:26px;height:26px;border-radius:7px;
-    background:linear-gradient(135deg, var(--green) 0%, var(--green) 45%, #ffffff 50%, var(--red) 55%, var(--red) 100%);
-  }
-  .brand-title{ font-family:'Space Grotesk', sans-serif; font-weight:600; font-size:13px; letter-spacing:0.08em; text-transform:uppercase; }
-  nav a{
-    font-size:13px; font-weight:600; color:var(--text-dim); text-decoration:none; padding:8px 14px;
-    border-radius:8px; border:1px solid var(--glass-border); background:var(--glass-bg);
-  }
-  nav a:hover{ color:#fff; }
+  .chat-layout{ display:flex; height:100%; }
 
-  .layout{ flex:1; display:flex; min-height:0; }
-
-  .sidebar{
-    width:280px; flex-shrink:0; border-right:1px solid var(--glass-border);
+  .conv-sidebar{
+    width:260px; flex-shrink:0; border-right:1px solid var(--glass-border);
     background:rgba(255,255,255,0.015); display:flex; flex-direction:column;
   }
-  .sidebar-header{ padding:16px; border-bottom:1px solid var(--glass-border); }
+  .conv-sidebar-header{ padding:16px; border-bottom:1px solid var(--glass-border); }
   .new-chat-btn{
     width:100%; padding:9px; border-radius:8px; border:1px solid rgba(255,255,255,0.14);
     background:linear-gradient(135deg, #E31730 0%, var(--red) 55%, #A50E1F 100%); color:#fff;
     font-family:'Plus Jakarta Sans', sans-serif; font-size:13px; font-weight:600; cursor:pointer;
   }
   .conv-list{ flex:1; overflow-y:auto; }
-  .conv-item{
-    padding:12px 16px; cursor:pointer; border-bottom:1px solid rgba(255,255,255,0.03);
-    transition:background .15s ease;
-  }
+  .conv-item{ padding:12px 16px; cursor:pointer; border-bottom:1px solid rgba(255,255,255,0.03); transition:background .15s ease; }
   .conv-item:hover{ background:rgba(255,255,255,0.03); }
   .conv-item.active{ background:rgba(0,122,61,0.1); border-left:3px solid var(--green); padding-left:13px; }
   .conv-name{ font-size:13.5px; font-weight:600; margin-bottom:3px; }
@@ -70,17 +39,13 @@
   .msg-row{ display:flex; flex-direction:column; max-width:70%; }
   .msg-row.own{ align-self:flex-end; align-items:flex-end; }
   .msg-meta{ font-size:11px; color:var(--text-dim); margin-bottom:4px; padding:0 4px; }
-  .msg-bubble{
-    padding:9px 13px; border-radius:12px; background:var(--glass-bg); border:1px solid var(--glass-border);
-    font-size:13.5px; line-height:1.5; word-wrap:break-word; white-space:pre-wrap;
-  }
+  .msg-bubble{ padding:9px 13px; border-radius:12px; background:var(--glass-bg); border:1px solid var(--glass-border); font-size:13.5px; line-height:1.5; word-wrap:break-word; white-space:pre-wrap; }
   .msg-row.own .msg-bubble{ background:rgba(0,122,61,0.18); border-color:rgba(0,122,61,0.35); }
 
   .composer{ padding:14px 20px; border-top:1px solid var(--glass-border); display:flex; gap:10px; }
   .composer textarea{
     flex:1; resize:none; padding:10px 12px; border-radius:8px; background:rgba(255,255,255,0.04);
-    border:1px solid var(--glass-border); color:#f2f2f3; font-family:'Plus Jakarta Sans', sans-serif;
-    font-size:13.5px; outline:none; max-height:100px;
+    border:1px solid var(--glass-border); color:#f2f2f3; font-family:'Plus Jakarta Sans', sans-serif; font-size:13.5px; outline:none; max-height:100px;
   }
   .composer textarea:focus{ border-color:rgba(0,122,61,0.6); }
   .send-btn{
@@ -92,15 +57,9 @@
 
   .empty-state{ flex:1; display:flex; align-items:center; justify-content:center; color:var(--text-dim); font-size:13.5px; }
 
-  .modal-overlay{
-    display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:20;
-    align-items:center; justify-content:center;
-  }
+  .modal-overlay{ display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:20; align-items:center; justify-content:center; }
   .modal-overlay.visible{ display:flex; }
-  .modal{
-    width:100%; max-width:360px; margin:20px; padding:24px; border-radius:14px;
-    background:#1a1a1d; border:1px solid var(--glass-border);
-  }
+  .modal{ width:100%; max-width:360px; margin:20px; padding:24px; border-radius:14px; background:#1a1a1d; border:1px solid var(--glass-border); }
   .modal h3{ font-family:'Space Grotesk', sans-serif; font-size:16px; margin-bottom:14px; }
   .modal label{ display:block; font-size:11.5px; font-weight:600; text-transform:uppercase; color:var(--text-dim); margin-bottom:6px; letter-spacing:0.04em; }
   .modal input[type="text"]{
@@ -110,35 +69,50 @@
   .member-list{ max-height:180px; overflow-y:auto; border:1px solid var(--glass-border); border-radius:8px; padding:8px; margin-bottom:16px; }
   .member-checkbox{ display:flex; align-items:center; gap:8px; padding:6px 4px; font-size:13px; }
   .modal-actions{ display:flex; gap:10px; justify-content:flex-end; }
-  .modal-actions button{
-    padding:8px 16px; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; border:1px solid var(--glass-border);
-  }
+  .modal-actions button{ padding:8px 16px; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; border:1px solid var(--glass-border); }
   .modal-cancel{ background:transparent; color:var(--text-dim); }
   .modal-create{ background:linear-gradient(135deg, #E31730, var(--red)); color:#fff; border-color:rgba(255,255,255,0.14); }
 </style>
 </head>
 <body>
-  <nav>
-    <div class="brand">
-      <div class="brand-icon"></div>
-      <span class="brand-title">Team Chat</span>
-    </div>
-    <a href="/dashboard.html">← Back to Dashboard</a>
-  </nav>
-
-  <div class="layout">
-    <div class="sidebar">
-      <div class="sidebar-header">
-        <button class="new-chat-btn" id="newChatBtn">+ New Conversation</button>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-icon"></div>
+        <span class="brand-title">Pins for Palestine</span>
       </div>
-      <div class="conv-list" id="convList">
-        <div style="padding:16px; color:var(--text-dim); font-size:13px;">Loading…</div>
+      <nav class="sidebar-nav">
+        <a href="/dashboard.html"><span>Dashboard</span></a>
+        <a href="/tasks.html"><span>My Tasks</span></a>
+        <a href="/chat.html"><span>Team Chat</span></a>
+        <a href="/users.html" id="navUserMgmt" style="display:none;"><span>User Management</span></a>
+        <div class="nav-divider"></div>
+        <a href="#" class="disabled-link"><span>Pin Requests</span><span class="soon-badge">Soon</span></a>
+        <a href="#" class="disabled-link"><span>Inventory</span><span class="soon-badge">Soon</span></a>
+        <a href="#" class="disabled-link"><span>Campaign Impact</span><span class="soon-badge">Soon</span></a>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="sidebar-username" id="sidebarUsername">Loading…</div>
+        <button id="logoutBtn">Log Out</button>
       </div>
-    </div>
+    </aside>
 
-    <div class="chat-pane" id="chatPane">
-      <div class="empty-state">Select a conversation to start chatting.</div>
-    </div>
+    <main class="content-area">
+      <div class="chat-layout">
+        <div class="conv-sidebar">
+          <div class="conv-sidebar-header">
+            <button class="new-chat-btn" id="newChatBtn">+ New Conversation</button>
+          </div>
+          <div class="conv-list" id="convList">
+            <div style="padding:16px; color:var(--text-dim); font-size:13px;">Loading…</div>
+          </div>
+        </div>
+
+        <div class="chat-pane" id="chatPane">
+          <div class="empty-state">Select a conversation to start chatting.</div>
+        </div>
+      </div>
+    </main>
   </div>
 
   <div class="modal-overlay" id="modalOverlay">
@@ -155,11 +129,11 @@
     </div>
   </div>
 
+  <script src="/assets/shell.js"></script>
   <script>
     let activeConversationId = null;
     let lastMessageId = 0;
     let pollTimer = null;
-    let convPollTimer = null;
     let currentUsername = null;
 
     function escapeHtml(str) {
@@ -292,7 +266,6 @@
       btn.disabled = false;
     }
 
-    // New conversation modal
     document.getElementById('newChatBtn').addEventListener('click', async () => {
       const listEl = document.getElementById('memberList');
       listEl.innerHTML = 'Loading…';
@@ -318,10 +291,7 @@
 
     document.getElementById('modalCreateBtn').addEventListener('click', async () => {
       const checked = [...document.querySelectorAll('#memberList input:checked')].map(el => Number(el.value));
-      if (checked.length === 0) {
-        alert('Select at least one person.');
-        return;
-      }
+      if (checked.length === 0) { alert('Select at least one person.'); return; }
       const name = document.getElementById('convNameInput').value.trim();
       try {
         const res = await fetch('/api/chat/conversations', {
@@ -330,10 +300,7 @@
           body: JSON.stringify({ memberIds: checked, name }),
         });
         const data = await res.json();
-        if (!res.ok) {
-          alert(data.error || 'Could not create conversation.');
-          return;
-        }
+        if (!res.ok) { alert(data.error || 'Could not create conversation.'); return; }
         document.getElementById('modalOverlay').classList.remove('visible');
         document.getElementById('convNameInput').value = '';
         await loadConversations(false);
@@ -343,18 +310,14 @@
       }
     });
 
-    (async () => {
-      try {
-        const res = await fetch('/api/session');
-        if (!res.ok) { window.location.href = '/employee-login.html'; return; }
-        const data = await res.json();
-        if (data.mustChangePassword) { window.location.href = '/change-password.html'; return; }
-        currentUsername = data.username;
-        loadConversations(false);
-        convPollTimer = setInterval(() => loadConversations(true), 15000);
-      } catch {
-        window.location.href = '/employee-login.html';
-      }
+    document.addEventListener('pfp-session-ready', (e) => {
+      currentUsername = e.detail.username;
+      loadConversations(false);
+      setInterval(() => loadConversations(true), 15000);
+    });
+  </script>
+</body>
+</html>
     })();
   </script>
 </body>
