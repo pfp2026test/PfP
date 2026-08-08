@@ -9,7 +9,7 @@ export async function onRequestGet(context) {
   const state = url.searchParams.get('state');
   const errorParam = url.searchParams.get('error');
 
-  const dashboardUrl = new URL('/dashboard.html', url);
+  const dashboardUrl = new URL('/tasks.html', url);
 
   if (errorParam || !code || !state) {
     dashboardUrl.searchParams.set('jira_error', errorParam || 'missing_code');
