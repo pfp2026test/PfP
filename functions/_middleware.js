@@ -1,6 +1,6 @@
 import { getCookie, getSessionUser } from './_lib/auth.js';
 
-const PROTECTED_PATHS = ['/dashboard.html', '/dashboard'];
+const PROTECTED_PATHS = ['/dashboard.html', '/dashboard', '/chat.html', '/chat'];
 const CHANGE_PASSWORD_PATH = '/change-password.html';
 const LOGIN_PATH = '/employee-login.html';
 
@@ -23,7 +23,7 @@ export async function onRequest(context) {
   if (sessionUser.must_change_password) {
     return Response.redirect(new URL(CHANGE_PASSWORD_PATH, url), 302);
   }
+
   // Authenticated and password is current — let the static file through.
   return next();
-} 
-
+}
