@@ -34,12 +34,25 @@ export async function onRequestPost(context) {
   const salt = newSalt();
   const hash = await hashPassword(tempPassword, salt);
 
-  await db
+  const result = await db
     .prepare(
       'INSERT INTO users (username, password_hash, password_salt, must_change_password, is_admin) VALUES (?, ?, ?, 1, ?)'
     )
     .bind(username, hash, salt, makeAdmin ? 1 : 0)
     .run();
 
+  const newUserId = result.meta.last_row_id;
+
+  // Auto-add every new employee to the main group chat.
+  const mainGroup = await db.prepare('SELECT id FROM conversations WHERE is_main_group = 1').first();
+  if (mainGroup) {
+    await db
+      .prepare('INSERT OR IGNORE INTO conversation_members (conversation_id, user_id) VALUES (?, ?)')
+      .bind(mainGroup.id, newUserId)
+      .run();
+  }
+
+  // The temporary password is only ever returned here, once. It is never stored in
+  // plaintext or retrievable again — only its hash is kept.
   return json({ ok: true, username, tempPassword });
 }
