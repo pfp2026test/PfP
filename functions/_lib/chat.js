@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Team Chat — Pins for Palestine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#121214; --green:#007A3D; --red:#CE1126;
+    --glass-border: rgba(255,255,255,0.09);
+    --glass-bg: rgba(255,255,255,0.03);
+    --text-dim: rgba(235,235,238,0.62);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{height:100%;overflow:hidden;}
+  body{
+    background:var(--bg); color:#f2f2f3; font-family:'Plus Jakarta Sans', sans-serif;
+    -webkit-font-smoothing:antialiased; display:flex; flex-direction:column;
+  }
+  nav{
+    display:flex; align-items:center; justify-content:space-between; padding:14px 24px;
+    background:rgba(18,18,20,0.6); backdrop-filter:blur(18px); border-bottom:1px solid var(--glass-border);
+    flex-shrink:0;
+  }
+  .brand{ display:flex; align-items:center; gap:10px; }
+  .brand-icon{
+    width:26px;height:26px;border-radius:7px;
+    background:linear-gradient(135deg, var(--green) 0%, var(--green) 45%, #ffffff 50%, var(--red) 55%, var(--red) 100%);
+  }
+  .brand-title{ font-family:'Space Grotesk', sans-serif; font-weight:600; font-size:13px; letter-spacing:0.08em; text-transform:uppercase; }
+  nav a{
+    font-size:13px; font-weight:600; color:var(--text-dim); text-decoration:none; padding:8px 14px;
+    border-radius:8px; border:1px solid var(--glass-border); background:var(--glass-bg);
+  }
+  nav a:hover{ color:#fff; }
+
+  .layout{ flex:1; display:flex; min-height:0; }
+
+  .sidebar{
+    width:280px; flex-shrink:0; border-right:1px solid var(--glass-border);
+    background:rgba(255,255,255,0.015); display:flex; flex-direction:column;
+  }
+  .sidebar-header{ padding:16px; border-bottom:1px solid var(--glass-border); }
+  .new-chat-btn{
+    width:100%; padding:9px; border-radius:8px; border:1px solid rgba(255,255,255,0.14);
+    background:linear-gradient(135deg, #E31730 0%, var(--red) 55%, #A50E1F 100%); color:#fff;
+    font-family:'Plus Jakarta Sans', sans-serif; font-size:13px; font-weight:600; cursor:pointer;
+  }
+  .conv-list{ flex:1; overflow-y:auto; }
+  .conv-item{
+    padding:12px 16px; cursor:pointer; border-bottom:1px solid rgba(255,255,255,0.03);
+    transition:background .15s ease;
+  }
+  .conv-item:hover{ background:rgba(255,255,255,0.03); }
+  .conv-item.active{ background:rgba(0,122,61,0.1); border-left:3px solid var(--green); padding-left:13px; }
+  .conv-name{ font-size:13.5px; font-weight:600; margin-bottom:3px; }
+  .conv-preview{ font-size:12px; color:var(--text-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .main-badge{
+    display:inline-block; font-size:10px; font-weight:700; letter-spacing:0.04em; color:#4fce8a;
+    background:rgba(0,122,61,0.15); border:1px solid rgba(0,122,61,0.3); border-radius:5px; padding:1px 6px; margin-left:6px;
+    text-transform:uppercase; vertical-align:middle;
+  }
+
+  .chat-pane{ flex:1; display:flex; flex-direction:column; min-width:0; }
+  .chat-header{ padding:16px 20px; border-bottom:1px solid var(--glass-border); font-family:'Space Grotesk', sans-serif; font-weight:600; font-size:15px; }
+  .messages{ flex:1; overflow-y:auto; padding:20px; display:flex; flex-direction:column; gap:14px; }
+  .msg-row{ display:flex; flex-direction:column; max-width:70%; }
+  .msg-row.own{ align-self:flex-end; align-items:flex-end; }
+  .msg-meta{ font-size:11px; color:var(--text-dim); margin-bottom:4px; padding:0 4px; }
+  .msg-bubble{
+    padding:9px 13px; border-radius:12px; background:var(--glass-bg); border:1px solid var(--glass-border);
+    font-size:13.5px; line-height:1.5; word-wrap:break-word; white-space:pre-wrap;
+  }
+  .msg-row.own .msg-bubble{ background:rgba(0,122,61,0.18); border-color:rgba(0,122,61,0.35); }
+
+  .composer{ padding:14px 20px; border-top:1px solid var(--glass-border); display:flex; gap:10px; }
+  .composer textarea{
+    flex:1; resize:none; padding:10px 12px; border-radius:8px; background:rgba(255,255,255,0.04);
+    border:1px solid var(--glass-border); color:#f2f2f3; font-family:'Plus Jakarta Sans', sans-serif;
+    font-size:13.5px; outline:none; max-height:100px;
+  }
+  .composer textarea:focus{ border-color:rgba(0,122,61,0.6); }
+  .send-btn{
+    padding:0 18px; border-radius:8px; border:1px solid rgba(255,255,255,0.14);
+    background:linear-gradient(135deg, #E31730 0%, var(--red) 55%, #A50E1F 100%); color:#fff;
+    font-family:'Plus Jakarta Sans', sans-serif; font-size:13px; font-weight:600; cursor:pointer;
+  }
+  .send-btn:disabled{ opacity:0.5; cursor:not-allowed; }
+
+  .empty-state{ flex:1; display:flex; align-items:center; justify-content:center; color:var(--text-dim); font-size:13.5px; }
+
+  .modal-overlay{
+    display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:20;
+    align-items:center; justify-content:center;
+  }
+  .modal-overlay.visible{ display:flex; }
+  .modal{
+    width:100%; max-width:360px; margin:20px; padding:24px; border-radius:14px;
+    background:#1a1a1d; border:1px solid var(--glass-border);
+  }
+  .modal h3{ font-family:'Space Grotesk', sans-serif; font-size:16px; margin-bottom:14px; }
+  .modal label{ display:block; font-size:11.5px; font-weight:600; text-transform:uppercase; color:var(--text-dim); margin-bottom:6px; letter-spacing:0.04em; }
+  .modal input[type="text"]{
+    width:100%; padding:9px 11px; border-radius:8px; background:rgba(255,255,255,0.04);
+    border:1px solid var(--glass-border); color:#f2f2f3; font-size:13.5px; margin-bottom:14px; outline:none;
+  }
+  .member-list{ max-height:180px; overflow-y:auto; border:1px solid var(--glass-border); border-radius:8px; padding:8px; margin-bottom:16px; }
+  .member-checkbox{ display:flex; align-items:center; gap:8px; padding:6px 4px; font-size:13px; }
+  .modal-actions{ display:flex; gap:10px; justify-content:flex-end; }
+  .modal-actions button{
+    padding:8px 16px; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; border:1px solid var(--glass-border);
+  }
+  .modal-cancel{ background:transparent; color:var(--text-dim); }
+  .modal-create{ background:linear-gradient(135deg, #E31730, var(--red)); color:#fff; border-color:rgba(255,255,255,0.14); }
+</style>
+</head>
+<body>
+  <nav>
+    <div class="brand">
+      <div class="brand-icon"></div>
+      <span class="brand-title">Team Chat</span>
+    </div>
+    <a href="/dashboard.html">← Back to Dashboard</a>
+  </nav>
+
+  <div class="layout">
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <button class="new-chat-btn" id="newChatBtn">+ New Conversation</button>
+      </div>
+      <div class="conv-list" id="convList">
+        <div style="padding:16px; color:var(--text-dim); font-size:13px;">Loading…</div>
+      </div>
+    </div>
+
+    <div class="chat-pane" id="chatPane">
+      <div class="empty-state">Select a conversation to start chatting.</div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <h3>New Conversation</h3>
+      <label for="convNameInput">Name (optional, for groups)</label>
+      <input type="text" id="convNameInput" placeholder="e.g. Fundraising Team">
+      <label>Select people</label>
+      <div class="member-list" id="memberList"></div>
+      <div class="modal-actions">
+        <button class="modal-cancel" id="modalCancelBtn">Cancel</button>
+        <button class="modal-create" id="modalCreateBtn">Create</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let activeConversationId = null;
+    let lastMessageId = 0;
+    let pollTimer = null;
+    let convPollTimer = null;
+    let currentUsername = null;
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    function timeAgo(iso) {
+      const d = new Date(iso + 'Z');
+      return d.toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+    }
+
+    async function loadConversations(preserveSelection) {
+      const listEl = document.getElementById('convList');
+      try {
+        const res = await fetch('/api/chat/conversations');
+        const data = await res.json();
+        if (!res.ok) {
+          listEl.innerHTML = '<div style="padding:16px; color:#ff9aa5; font-size:13px;">' + escapeHtml(data.error || 'Could not load.') + '</div>';
+          return;
+        }
+        if (data.conversations.length === 0) {
+          listEl.innerHTML = '<div style="padding:16px; color:var(--text-dim); font-size:13px;">No conversations yet.</div>';
+          return;
+        }
+        listEl.innerHTML = data.conversations.map(c => {
+          const isActive = c.id === activeConversationId;
+          const preview = c.lastMessage ? escapeHtml(c.lastMessage.slice(0, 60)) : 'No messages yet';
+          const badge = c.isMainGroup ? '<span class="main-badge">Main</span>' : '';
+          return '<div class="conv-item' + (isActive ? ' active' : '') + '" data-id="' + c.id + '" data-name="' + escapeHtml(c.name) + '">' +
+            '<div class="conv-name">' + escapeHtml(c.name) + badge + '</div>' +
+            '<div class="conv-preview">' + preview + '</div>' +
+          '</div>';
+        }).join('');
+
+        listEl.querySelectorAll('.conv-item').forEach(el => {
+          el.addEventListener('click', () => openConversation(Number(el.dataset.id), el.dataset.name));
+        });
+
+        if (!preserveSelection && !activeConversationId && data.conversations.length > 0) {
+          openConversation(data.conversations[0].id, data.conversations[0].name);
+        }
+      } catch {
+        listEl.innerHTML = '<div style="padding:16px; color:#ff9aa5; font-size:13px;">Could not reach the server.</div>';
+      }
+    }
+
+    function renderChatShell(name) {
+      document.getElementById('chatPane').innerHTML =
+        '<div class="chat-header">' + escapeHtml(name) + '</div>' +
+        '<div class="messages" id="messagesEl"></div>' +
+        '<div class="composer">' +
+          '<textarea id="messageInput" rows="1" placeholder="Type a message…"></textarea>' +
+          '<button class="send-btn" id="sendBtn">Send</button>' +
+        '</div>';
+
+      document.getElementById('sendBtn').addEventListener('click', sendMessage);
+      document.getElementById('messageInput').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          sendMessage();
+        }
+      });
+    }
+
+    function appendMessages(messages) {
+      const el = document.getElementById('messagesEl');
+      if (!el) return;
+      const nearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 80;
+      messages.forEach(m => {
+        const own = m.sender_username === currentUsername;
+        const row = document.createElement('div');
+        row.className = 'msg-row' + (own ? ' own' : '');
+        row.innerHTML =
+          '<div class="msg-meta">' + (own ? 'You' : escapeHtml(m.sender_username)) + ' · ' + timeAgo(m.created_at) + '</div>' +
+          '<div class="msg-bubble">' + escapeHtml(m.body) + '</div>';
+        el.appendChild(row);
+        lastMessageId = Math.max(lastMessageId, m.id);
+      });
+      if (nearBottom) el.scrollTop = el.scrollHeight;
+    }
+
+    async function openConversation(id, name) {
+      activeConversationId = id;
+      lastMessageId = 0;
+      clearInterval(pollTimer);
+      renderChatShell(name);
+      loadConversations(true);
+
+      try {
+        const res = await fetch('/api/chat/messages?conversationId=' + id);
+        const data = await res.json();
+        if (res.ok) appendMessages(data.messages);
+      } catch {}
+
+      pollTimer = setInterval(async () => {
+        if (!activeConversationId) return;
+        try {
+          const res = await fetch('/api/chat/messages?conversationId=' + activeConversationId + '&afterId=' + lastMessageId);
+          const data = await res.json();
+          if (res.ok && data.messages.length > 0) {
+            appendMessages(data.messages);
+            loadConversations(true);
+          }
+        } catch {}
+      }, 4000);
+    }
+
+    async function sendMessage() {
+      const input = document.getElementById('messageInput');
+      const text = input.value.trim();
+      if (!text || !activeConversationId) return;
+      const btn = document.getElementById('sendBtn');
+      btn.disabled = true;
+      try {
+        const res = await fetch('/api/chat/messages', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ conversationId: activeConversationId, body: text }),
+        });
+        if (res.ok) {
+          input.value = '';
+          const msgRes = await fetch('/api/chat/messages?conversationId=' + activeConversationId + '&afterId=' + lastMessageId);
+          const msgData = await msgRes.json();
+          if (msgRes.ok) appendMessages(msgData.messages);
+          loadConversations(true);
+        }
+      } catch {}
+      btn.disabled = false;
+    }
+
+    // New conversation modal
+    document.getElementById('newChatBtn').addEventListener('click', async () => {
+      const listEl = document.getElementById('memberList');
+      listEl.innerHTML = 'Loading…';
+      document.getElementById('modalOverlay').classList.add('visible');
+      try {
+        const res = await fetch('/api/chat/members');
+        const data = await res.json();
+        if (!res.ok || data.users.length === 0) {
+          listEl.innerHTML = 'No other employees yet.';
+          return;
+        }
+        listEl.innerHTML = data.users.map(u =>
+          '<label class="member-checkbox"><input type="checkbox" value="' + u.id + '"> ' + escapeHtml(u.username) + '</label>'
+        ).join('');
+      } catch {
+        listEl.innerHTML = 'Could not load employees.';
+      }
+    });
+
+    document.getElementById('modalCancelBtn').addEventListener('click', () => {
+      document.getElementById('modalOverlay').classList.remove('visible');
+    });
+
+    document.getElementById('modalCreateBtn').addEventListener('click', async () => {
+      const checked = [...document.querySelectorAll('#memberList input:checked')].map(el => Number(el.value));
+      if (checked.length === 0) {
+        alert('Select at least one person.');
+        return;
+      }
+      const name = document.getElementById('convNameInput').value.trim();
+      try {
+        const res = await fetch('/api/chat/conversations', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ memberIds: checked, name }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          alert(data.error || 'Could not create conversation.');
+          return;
+        }
+        document.getElementById('modalOverlay').classList.remove('visible');
+        document.getElementById('convNameInput').value = '';
+        await loadConversations(false);
+        openConversation(data.conversationId, name || 'New conversation');
+      } catch {
+        alert('Could not reach the server.');
+      }
+    });
+
+    (async () => {
+      try {
+        const res = await fetch('/api/session');
+        if (!res.ok) { window.location.href = '/employee-login.html'; return; }
+        const data = await res.json();
+        if (data.mustChangePassword) { window.location.href = '/change-password.html'; return; }
+        currentUsername = data.username;
+        loadConversations(false);
+        convPollTimer = setInterval(() => loadConversations(true), 15000);
+      } catch {
+        window.location.href = '/employee-login.html';
+      }
+    })();
+  </script>
+</body>
+</html>
