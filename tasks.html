@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Tasks — Pins for Palestine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/shell.css">
+<style>
+  .content-inner{ position:relative; z-index:2; max-width:820px; margin:0 auto; padding:56px 32px; }
+  .eyebrow{ font-size:12.5px; font-weight:600; letter-spacing:0.2em; text-transform:uppercase; color:var(--text-dim); margin-bottom:14px; }
+  h1{ font-family:'Space Grotesk', sans-serif; font-weight:700; font-size:clamp(1.8rem, 4vw, 2.4rem); letter-spacing:-0.01em; margin-bottom:24px; }
+
+  .panel{ border-radius:16px; background:var(--glass-bg); border:1px solid var(--glass-border); padding:28px; }
+  .sub{ font-size:13.5px; color:var(--text-dim); margin-bottom:22px; }
+
+  .add-btn{
+    padding:10px 20px; border-radius:8px; border:1px solid rgba(255,255,255,0.14);
+    background:linear-gradient(135deg, #E31730 0%, var(--red) 55%, #A50E1F 100%); color:#fff;
+    font-family:'Plus Jakarta Sans', sans-serif; font-size:13.5px; font-weight:600; cursor:pointer;
+  }
+  .del-btn{
+    font-size:12px; font-weight:600; color:#ff9aa5; background:rgba(206,17,38,0.08);
+    border:1px solid rgba(206,17,38,0.3); border-radius:6px; padding:6px 12px; cursor:pointer;
+  }
+  .del-btn:hover{ background:rgba(206,17,38,0.18); }
+
+  table{ width:100%; border-collapse:collapse; margin-bottom:20px; }
+  th{ text-align:left; font-size:11.5px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase; color:var(--text-dim); padding:0 12px 10px; border-bottom:1px solid var(--glass-border); }
+  td{ padding:12px; border-bottom:1px solid rgba(255,255,255,0.04); font-size:13.5px; vertical-align:middle; }
+  tr:last-child td{ border-bottom:none; }
+
+  .msg{ margin-top:14px; padding:10px 14px; border-radius:8px; font-size:13px; line-height:1.5; display:none; }
+  .msg.visible{ display:block; }
+  .msg-error{ background:rgba(206,17,38,0.1); border:1px solid rgba(206,17,38,0.35); color:#ff9aa5; }
+  .msg-success{ background:rgba(0,122,61,0.1); border:1px solid rgba(0,122,61,0.35); color:#8be3af; }
+</style>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-icon"></div>
+        <span class="brand-title">Pins for Palestine</span>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="/dashboard.html"><span>Dashboard</span></a>
+        <a href="/tasks.html"><span>My Tasks</span></a>
+        <a href="/chat.html"><span>Team Chat</span></a>
+        <a href="/users.html" id="navUserMgmt" style="display:none;"><span>User Management</span></a>
+        <div class="nav-divider"></div>
+        <a href="#" class="disabled-link"><span>Pin Requests</span><span class="soon-badge">Soon</span></a>
+        <a href="#" class="disabled-link"><span>Inventory</span><span class="soon-badge">Soon</span></a>
+        <a href="#" class="disabled-link"><span>Campaign Impact</span><span class="soon-badge">Soon</span></a>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="sidebar-username" id="sidebarUsername">Loading…</div>
+        <button id="logoutBtn">Log Out</button>
+      </div>
+    </aside>
+
+    <main class="content-area">
+      <div class="glow glow-green"></div>
+      <div class="glow glow-red"></div>
+      <div class="content-inner">
+        <p class="eyebrow">Internal</p>
+        <h1>My Tasks</h1>
+
+        <div class="panel">
+          <p class="sub" id="tasksSub">Loading…</p>
+
+          <div id="tasksNotConnected" style="display:none;">
+            <button class="add-btn" id="connectJiraBtn">Connect Jira Account</button>
+          </div>
+
+          <div id="tasksConnected" style="display:none;">
+            <table id="tasksTable">
+              <thead>
+                <tr><th>Key</th><th>Summary</th><th>Status</th><th>Priority</th></tr>
+              </thead>
+              <tbody id="tasksTbody"></tbody>
+            </table>
+            <button class="del-btn" id="disconnectJiraBtn">Disconnect Jira</button>
+          </div>
+
+          <div class="msg" id="tasksMsg"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="/assets/shell.js"></script>
+  <script>
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    async function loadTasks() {
+      const sub = document.getElementById('tasksSub');
+      const notConnected = document.getElementById('tasksNotConnected');
+      const connected = document.getElementById('tasksConnected');
+      const tbody = document.getElementById('tasksTbody');
+
+      try {
+        const res = await fetch('/api/jira/tasks');
+        const data = await res.json();
+
+        if (!data.connected) {
+          sub.textContent = data.error || 'Connect your Jira account to see tasks assigned to you here.';
+          notConnected.style.display = 'block';
+          connected.style.display = 'none';
+          return;
+        }
+
+        notConnected.style.display = 'none';
+        connected.style.display = 'block';
+
+        if (data.error) {
+          sub.textContent = data.error;
+        } else if (!data.issues || data.issues.length === 0) {
+          sub.textContent = 'Nothing assigned to you right now.';
+        } else {
+          sub.textContent = data.issues.length + ' open item' + (data.issues.length === 1 ? '' : 's') + ' assigned to you.';
+        }
+
+        tbody.innerHTML = (data.issues || []).map(issue => {
+          const link = issue.url
+            ? '<a href="' + escapeHtml(issue.url) + '" target="_blank" rel="noopener" style="color:#8be3af;">' + escapeHtml(issue.key) + '</a>'
+            : escapeHtml(issue.key);
+          return '<tr><td>' + link + '</td><td>' + escapeHtml(issue.summary || '') + '</td><td>' +
+            escapeHtml(issue.status || '—') + '</td><td>' + escapeHtml(issue.priority || '—') + '</td></tr>';
+        }).join('');
+      } catch {
+        sub.textContent = 'Could not reach the server.';
+      }
+    }
+
+    document.getElementById('connectJiraBtn').addEventListener('click', () => {
+      window.location.href = '/api/jira/connect';
+    });
+
+    document.getElementById('disconnectJiraBtn').addEventListener('click', async () => {
+      if (!confirm('Disconnect your Jira account? You can reconnect any time.')) return;
+      try {
+        await fetch('/api/jira/disconnect', { method: 'POST' });
+        loadTasks();
+      } catch {
+        alert('Could not reach the server.');
+      }
+    });
+
+    (function showJiraUrlMessages() {
+      const params = new URLSearchParams(window.location.search);
+      const msg = document.getElementById('tasksMsg');
+      if (params.get('jira_connected')) {
+        msg.textContent = 'Jira account connected successfully.';
+        msg.className = 'msg msg-success visible';
+      } else if (params.get('jira_error')) {
+        msg.textContent = 'Could not connect Jira account (' + params.get('jira_error') + '). Please try again.';
+        msg.className = 'msg msg-error visible';
+      }
+      if (params.get('jira_connected') || params.get('jira_error')) {
+        window.history.replaceState({}, '', window.location.pathname);
+      }
+    })();
+
+    loadTasks();
+  </script>
+</body>
+</html>
