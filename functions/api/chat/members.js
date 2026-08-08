@@ -10,4 +10,4 @@ export async function onRequestGet(context) {
 
   const { results } = await db.prepare('SELECT id, username FROM users WHERE id != ? ORDER BY username ASC').bind(user.id).all();
   return json({ users: results });
-}
+} 
