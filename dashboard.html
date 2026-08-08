@@ -7,450 +7,76 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/shell.css">
 <style>
-  :root{
-    --bg:#121214; --green:#007A3D; --red:#CE1126;
-    --glass-border: rgba(255,255,255,0.09);
-    --glass-bg: rgba(255,255,255,0.03);
-    --text-dim: rgba(235,235,238,0.62);
+  .content-inner{ position:relative; z-index:2; max-width:760px; margin:0 auto; padding:64px 32px; }
+  .eyebrow{ font-size:12.5px; font-weight:600; letter-spacing:0.2em; text-transform:uppercase; color:var(--text-dim); margin-bottom:14px; }
+  h1{ font-family:'Space Grotesk', sans-serif; font-weight:700; font-size:clamp(2rem, 5vw, 2.75rem); letter-spacing:-0.01em; margin-bottom:14px; }
+  .lead{ color:var(--text-dim); font-size:15px; line-height:1.6; margin-bottom:44px; max-width:520px; }
+  .quick-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:14px; }
+  .quick-card{
+    display:block; padding:20px; border-radius:14px; background:var(--glass-bg); border:1px solid var(--glass-border);
+    text-decoration:none; color:#f2f2f3; transition:border-color .15s ease, transform .15s ease;
   }
-  *{margin:0;padding:0;box-sizing:border-box;}
-  body{
-    min-height:100vh; background:var(--bg); color:#f2f2f3; font-family:'Plus Jakarta Sans', sans-serif;
-    -webkit-font-smoothing:antialiased; position:relative;
-  }
-  .glow{position:fixed;border-radius:50%;filter:blur(120px);pointer-events:none;z-index:0;}
-  .glow-green{width:46vw;height:46vw;top:-14vw;left:-12vw;background:radial-gradient(circle, rgba(0,122,61,0.28) 0%, rgba(0,122,61,0) 70%);}
-  .glow-red{width:50vw;height:50vw;bottom:-18vw;right:-14vw;background:radial-gradient(circle, rgba(206,17,38,0.22) 0%, rgba(206,17,38,0) 70%);}
-
-  nav{
-    position:sticky; top:0; z-index:10; display:flex; align-items:center; justify-content:space-between;
-    padding:18px 40px; background:rgba(18,18,20,0.55); backdrop-filter:blur(18px) saturate(140%);
-    -webkit-backdrop-filter:blur(18px) saturate(140%); border-bottom:1px solid var(--glass-border);
-  }
-  .brand{ display:flex; align-items:center; gap:12px; }
-  .brand-icon{
-    width:30px;height:30px;border-radius:8px;
-    background:linear-gradient(135deg, var(--green) 0%, var(--green) 45%, #ffffff 50%, var(--red) 55%, var(--red) 100%);
-    box-shadow:0 0 0 1px rgba(255,255,255,0.12) inset;
-  }
-  .brand-title{ font-family:'Space Grotesk', sans-serif; font-weight:600; font-size:14px; letter-spacing:0.1em; text-transform:uppercase; }
-  #logoutBtn{
-    font-family:'Plus Jakarta Sans', sans-serif; font-size:13px; font-weight:600; padding:9px 16px;
-    border-radius:8px; color:#f2f2f3; background:var(--glass-bg); border:1px solid var(--glass-border);
-    cursor:pointer; transition:border-color .18s ease, background .18s ease;
-  }
-  #logoutBtn:hover{ border-color:rgba(255,255,255,0.24); background:rgba(255,255,255,0.07); }
-
-  main{
-    position:relative; z-index:2; max-width:900px; margin:0 auto; padding:56px 24px 100px;
-  }
-  .eyebrow{
-    font-size:12.5px; font-weight:600; letter-spacing:0.2em; text-transform:uppercase;
-    color:var(--text-dim); margin-bottom:14px;
-  }
-  h1{
-    font-family:'Space Grotesk', sans-serif; font-weight:700; font-size:clamp(2rem, 5vw, 3rem);
-    letter-spacing:-0.01em; margin-bottom:16px;
-  }
-  #welcome{ color:var(--text-dim); font-size:15px; margin-bottom:40px; }
-
-  .grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:16px; margin-bottom:48px; }
-  .tile{
-    padding:24px; border-radius:14px; background:var(--glass-bg); border:1px solid var(--glass-border);
-    backdrop-filter:blur(14px);
-  }
-  .tile h2{ font-family:'Space Grotesk', sans-serif; font-size:15px; font-weight:600; margin-bottom:8px; }
-  .tile p{ font-size:13.5px; color:var(--text-dim); line-height:1.6; }
-
-  .panel{
-    border-radius:16px; background:var(--glass-bg); border:1px solid var(--glass-border);
-    backdrop-filter:blur(14px); padding:28px; margin-bottom:32px;
-  }
-  .panel h2{ font-family:'Space Grotesk', sans-serif; font-size:19px; font-weight:600; margin-bottom:6px; }
-  .panel .sub{ font-size:13.5px; color:var(--text-dim); margin-bottom:24px; }
-
-  table{ width:100%; border-collapse:collapse; margin-bottom:26px; }
-  th{
-    text-align:left; font-size:11.5px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase;
-    color:var(--text-dim); padding:0 12px 10px; border-bottom:1px solid var(--glass-border);
-  }
-  td{ padding:12px; border-bottom:1px solid rgba(255,255,255,0.04); font-size:13.5px; vertical-align:middle; }
-  tr:last-child td{ border-bottom:none; }
-
-  .badge{
-    display:inline-block; font-size:11px; font-weight:600; letter-spacing:0.03em; padding:3px 9px;
-    border-radius:999px; text-transform:uppercase;
-  }
-  .badge-admin{ background:rgba(0,122,61,0.15); color:#4fce8a; border:1px solid rgba(0,122,61,0.35); }
-  .badge-pending{ background:rgba(206,17,38,0.12); color:#ff9aa5; border:1px solid rgba(206,17,38,0.3); }
-
-  .del-btn{
-    font-size:12px; font-weight:600; color:#ff9aa5; background:rgba(206,17,38,0.08);
-    border:1px solid rgba(206,17,38,0.3); border-radius:6px; padding:6px 12px; cursor:pointer;
-    transition:background .15s ease;
-  }
-  .del-btn:hover{ background:rgba(206,17,38,0.18); }
-  .del-btn:disabled{ opacity:0.35; cursor:not-allowed; }
-
-  .add-form{ display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end; }
-  .add-form .field{ flex:1; min-width:180px; }
-  .add-form label{
-    display:block; font-size:12px; font-weight:500; letter-spacing:0.03em; text-transform:uppercase;
-    color:var(--text-dim); margin-bottom:7px;
-  }
-  .add-form input[type="text"]{
-    width:100%; padding:10px 12px; border-radius:8px; background:rgba(255,255,255,0.04);
-    border:1px solid var(--glass-border); color:#f2f2f3; font-family:'Plus Jakarta Sans', sans-serif;
-    font-size:14px; outline:none;
-  }
-  .add-form input[type="text"]:focus{ border-color:rgba(0,122,61,0.6); }
-  .checkbox-field{ display:flex; align-items:center; gap:8px; padding-bottom:10px; white-space:nowrap; }
-  .checkbox-field label{ font-size:13px; color:var(--text-dim); text-transform:none; letter-spacing:0; margin:0; }
-
-  .add-btn{
-    padding:10px 20px; border-radius:8px; border:1px solid rgba(255,255,255,0.14);
-    background:linear-gradient(135deg, #E31730 0%, var(--red) 55%, #A50E1F 100%); color:#fff;
-    font-family:'Plus Jakarta Sans', sans-serif; font-size:13.5px; font-weight:600; cursor:pointer;
-    white-space:nowrap; transition:transform .15s ease;
-  }
-  .add-btn:hover{ transform:translateY(-1px); }
-  .add-btn:disabled{ opacity:0.6; cursor:not-allowed; transform:none; }
-
-  .msg{ margin-top:14px; padding:10px 14px; border-radius:8px; font-size:13px; line-height:1.5; display:none; }
-  .msg.visible{ display:block; }
-  .msg-error{ background:rgba(206,17,38,0.1); border:1px solid rgba(206,17,38,0.35); color:#ff9aa5; }
-  .msg-success{
-    background:rgba(0,122,61,0.1); border:1px solid rgba(0,122,61,0.35); color:#8be3af;
-  }
-  .msg-success code{
-    display:block; margin-top:8px; padding:8px 10px; background:rgba(0,0,0,0.3); border-radius:6px;
-    font-size:14px; letter-spacing:0.03em; user-select:all;
-  }
-
-  #userMgmtSection{ display:none; }
-
-  .task-row{
-    display:flex; align-items:center; justify-content:space-between; gap:12px;
-    padding:12px 0; border-bottom:1px solid rgba(255,255,255,0.04);
-  }
-  .task-row:last-child{ border-bottom:none; }
-  .task-key{ font-family:'Space Grotesk', sans-serif; font-size:12px; font-weight:600; color:var(--text-dim); white-space:nowrap; }
-  .task-summary{ flex:1; font-size:13.5px; color:#f2f2f3; }
-  .task-summary a{ color:inherit; text-decoration:none; }
-  .task-summary a:hover{ text-decoration:underline; }
-  .task-status{
-    font-size:11px; font-weight:600; padding:3px 9px; border-radius:999px; white-space:nowrap;
-    background:rgba(255,255,255,0.06); border:1px solid var(--glass-border); color:var(--text-dim);
-  }
-  .connect-btn{
-    padding:10px 20px; border-radius:8px; border:1px solid rgba(255,255,255,0.14);
-    background:linear-gradient(135deg, #E31730 0%, var(--red) 55%, #A50E1F 100%); color:#fff;
-    font-family:'Plus Jakarta Sans', sans-serif; font-size:13.5px; font-weight:600; cursor:pointer;
-    text-decoration:none; display:inline-block;
-  }
-  .disconnect-link{ font-size:12px; color:var(--text-dim); background:none; border:none; cursor:pointer; text-decoration:underline; padding:0; margin-top:14px; }
+  .quick-card:hover{ border-color:rgba(255,255,255,0.2); transform:translateY(-2px); }
+  .quick-card h2{ font-family:'Space Grotesk', sans-serif; font-size:14.5px; font-weight:600; margin-bottom:6px; }
+  .quick-card p{ font-size:12.5px; color:var(--text-dim); line-height:1.5; }
 </style>
 </head>
 <body>
-  <div class="glow glow-green"></div>
-  <div class="glow glow-red"></div>
-
-  <nav>
-    <div class="brand">
-      <div class="brand-icon"></div>
-      <span class="brand-title">Pins for Palestine — Staff</span>
-    </div>
-    <button id="logoutBtn">Log Out</button>
-  </nav>
-
-  <main>
-    <p class="eyebrow">Internal</p>
-    <h1>Dashboard</h1>
-    <p id="welcome">Loading…</p>
-
-    <div class="grid">
-      <div class="tile">
-        <h2>Pin Requests</h2>
-        <p>Review incoming requests submitted through the public form.</p>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-icon"></div>
+        <span class="brand-title">Pins for Palestine</span>
       </div>
-      <div class="tile">
-        <h2>Inventory</h2>
-        <p>Track current stock of pin toolkits and materials.</p>
+      <nav class="sidebar-nav">
+        <a href="/dashboard.html"><span>Dashboard</span></a>
+        <a href="/tasks.html"><span>My Tasks</span></a>
+        <a href="/chat.html"><span>Team Chat</span></a>
+        <a href="/users.html" id="navUserMgmt" style="display:none;"><span>User Management</span></a>
+        <div class="nav-divider"></div>
+        <a href="#" class="disabled-link"><span>Pin Requests</span><span class="soon-badge">Soon</span></a>
+        <a href="#" class="disabled-link"><span>Inventory</span><span class="soon-badge">Soon</span></a>
+        <a href="#" class="disabled-link"><span>Campaign Impact</span><span class="soon-badge">Soon</span></a>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="sidebar-username" id="sidebarUsername">Loading…</div>
+        <button id="logoutBtn">Log Out</button>
       </div>
-      <div class="tile">
-        <h2>Campaign Impact</h2>
-        <p>Update the numbers shown on the public-facing impact page.</p>
-      </div>
-    </div>
+    </aside>
 
-    <section class="panel">
-      <h2>My Tasks</h2>
-      <p class="sub" id="tasksSub">Loading…</p>
+    <main class="content-area">
+      <div class="glow glow-green"></div>
+      <div class="glow glow-red"></div>
+      <div class="content-inner">
+        <p class="eyebrow">Internal</p>
+        <h1>Welcome back</h1>
+        <p class="lead">Jump into your tasks, catch up on team chat, or manage employee accounts using the sidebar.</p>
 
-      <div id="tasksNotConnected" style="display:none;">
-        <button class="add-btn" id="connectJiraBtn">Connect Jira Account</button>
-      </div>
-
-      <div id="tasksConnected" style="display:none;">
-        <table id="tasksTable">
-          <thead>
-            <tr>
-              <th>Key</th>
-              <th>Summary</th>
-              <th>Status</th>
-              <th>Priority</th>
-            </tr>
-          </thead>
-          <tbody id="tasksTbody"></tbody>
-        </table>
-        <button class="del-btn" id="disconnectJiraBtn">Disconnect Jira</button>
-      </div>
-
-      <div class="msg" id="tasksMsg"></div>
-    </section>
-
-    <section id="userMgmtSection" class="panel">
-      <h2>User Management</h2>
-      <p class="sub">Admin only. Add employee accounts and remove access when needed.</p>
-
-      <table id="usersTable">
-        <thead>
-          <tr>
-            <th>Username</th>
-            <th>Role</th>
-            <th>Status</th>
-            <th>Added</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody id="usersTbody">
-          <tr><td colspan="5" style="color:var(--text-dim);">Loading…</td></tr>
-        </tbody>
-      </table>
-
-      <form id="addUserForm" class="add-form">
-        <div class="field">
-          <label for="newUsername">New employee username</label>
-          <input type="text" id="newUsername" placeholder="e.g. jsmith" required>
+        <div class="quick-grid">
+          <a class="quick-card" href="/tasks.html">
+            <h2>My Tasks</h2>
+            <p>See your assigned Jira issues in one place.</p>
+          </a>
+          <a class="quick-card" href="/chat.html">
+            <h2>Team Chat</h2>
+            <p>Main group chat and direct messages with your team.</p>
+          </a>
+          <a class="quick-card" href="/users.html" id="usersCard" style="display:none;">
+            <h2>User Management</h2>
+            <p>Add or remove employee accounts.</p>
+          </a>
         </div>
-        <div class="checkbox-field">
-          <input type="checkbox" id="newIsAdmin">
-          <label for="newIsAdmin">Grant admin access</label>
-        </div>
-        <button type="submit" class="add-btn" id="addUserBtn">Add Employee</button>
-      </form>
+      </div>
+    </main>
+  </div>
 
-      <div class="msg" id="addUserMsg"></div>
-    </section>
-  </main>
-
+  <script src="/assets/shell.js"></script>
   <script>
-    function escapeHtml(str) {
-      const div = document.createElement('div');
-      div.textContent = str;
-      return div.innerHTML;
-    }
-
-    async function loadTasks() {
-      const sub = document.getElementById('tasksSub');
-      const notConnected = document.getElementById('tasksNotConnected');
-      const connected = document.getElementById('tasksConnected');
-      const tbody = document.getElementById('tasksTbody');
-
-      try {
-        const res = await fetch('/api/jira/tasks');
-        const data = await res.json();
-
-        if (!data.connected) {
-          sub.textContent = data.error || 'Connect your Jira account to see tasks assigned to you here.';
-          notConnected.style.display = 'block';
-          connected.style.display = 'none';
-          return;
-        }
-
-        notConnected.style.display = 'none';
-        connected.style.display = 'block';
-
-        if (data.error) {
-          sub.textContent = data.error;
-        } else if (!data.issues || data.issues.length === 0) {
-          sub.textContent = 'Nothing assigned to you right now.';
-        } else {
-          sub.textContent = data.issues.length + ' open item' + (data.issues.length === 1 ? '' : 's') + ' assigned to you.';
-        }
-
-        tbody.innerHTML = (data.issues || []).map(issue => {
-          const link = issue.url
-            ? `<a href="${escapeHtml(issue.url)}" target="_blank" rel="noopener" style="color:#8be3af;">${escapeHtml(issue.key)}</a>`
-            : escapeHtml(issue.key);
-          return `<tr>
-            <td>${link}</td>
-            <td>${escapeHtml(issue.summary || '')}</td>
-            <td>${escapeHtml(issue.status || '—')}</td>
-            <td>${escapeHtml(issue.priority || '—')}</td>
-          </tr>`;
-        }).join('');
-      } catch {
-        sub.textContent = 'Could not reach the server.';
-      }
-    }
-
-    document.getElementById('connectJiraBtn').addEventListener('click', () => {
-      window.location.href = '/api/jira/connect';
-    });
-
-    document.getElementById('disconnectJiraBtn').addEventListener('click', async () => {
-      if (!confirm('Disconnect your Jira account? You can reconnect any time.')) return;
-      try {
-        await fetch('/api/jira/disconnect', { method: 'POST' });
-        loadTasks();
-      } catch {
-        alert('Could not reach the server.');
-      }
-    });
-
-    (function showJiraUrlMessages() {
-      const params = new URLSearchParams(window.location.search);
-      const msg = document.getElementById('tasksMsg');
-      if (params.get('jira_connected')) {
-        msg.textContent = 'Jira account connected successfully.';
-        msg.className = 'msg msg-success visible';
-      } else if (params.get('jira_error')) {
-        msg.textContent = 'Could not connect Jira account (' + params.get('jira_error') + '). Please try again.';
-        msg.className = 'msg msg-error visible';
-      }
-      if (params.get('jira_connected') || params.get('jira_error')) {
-        window.history.replaceState({}, '', window.location.pathname);
-      }
-    })();
-
-    loadTasks();
-
-    let currentUserId = null;
-
-    async function loadUsers() {
-      const tbody = document.getElementById('usersTbody');
-      try {
-        const res = await fetch('/api/admin/list-users');
-        const data = await res.json();
-        if (!res.ok) {
-          tbody.innerHTML = '<tr><td colspan="5" style="color:#ff9aa5;">' + escapeHtml(data.error || 'Could not load users.') + '</td></tr>';
-          return;
-        }
-        if (data.users.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="5" style="color:var(--text-dim);">No users yet.</td></tr>';
-          return;
-        }
-        tbody.innerHTML = data.users.map(u => {
-          const isSelf = u.id === currentUserId;
-          const roleBadge = u.is_admin ? '<span class="badge badge-admin">Admin</span>' : 'Employee';
-          const statusBadge = u.must_change_password ? '<span class="badge badge-pending">Pending setup</span>' : 'Active';
-          const dateStr = new Date(u.created_at + 'Z').toLocaleDateString();
-          const delDisabled = isSelf ? 'disabled title="You can\'t delete your own account"' : '';
-          return `<tr>
-            <td>${escapeHtml(u.username)}${isSelf ? ' <span style="color:var(--text-dim);">(you)</span>' : ''}</td>
-            <td>${roleBadge}</td>
-            <td>${statusBadge}</td>
-            <td style="color:var(--text-dim);">${dateStr}</td>
-            <td><button class="del-btn" data-id="${u.id}" data-username="${escapeHtml(u.username)}" ${delDisabled}>Delete</button></td>
-          </tr>`;
-        }).join('');
-
-        tbody.querySelectorAll('.del-btn').forEach(btn => {
-          btn.addEventListener('click', () => deleteUser(btn.dataset.id, btn.dataset.username));
-        });
-      } catch (err) {
-        tbody.innerHTML = '<tr><td colspan="5" style="color:#ff9aa5;">Could not reach the server.</td></tr>';
-      }
-    }
-
-    async function deleteUser(userId, username) {
-      if (!confirm(`Delete the account "${username}"? This can't be undone.`)) return;
-      try {
-        const res = await fetch('/api/admin/delete-user', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userId: Number(userId) }),
-        });
-        const data = await res.json();
-        if (!res.ok) {
-          alert(data.error || 'Could not delete user.');
-          return;
-        }
-        loadUsers();
-      } catch {
-        alert('Could not reach the server.');
-      }
-    }
-
-    document.getElementById('addUserForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const msg = document.getElementById('addUserMsg');
-      msg.className = 'msg';
-      const btn = document.getElementById('addUserBtn');
-      const username = document.getElementById('newUsername').value.trim();
-      const isAdmin = document.getElementById('newIsAdmin').checked;
-
-      btn.disabled = true;
-      btn.textContent = 'Adding…';
-
-      try {
-        const res = await fetch('/api/admin/create-user', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, isAdmin }),
-        });
-        const data = await res.json();
-
-        if (!res.ok) {
-          msg.textContent = data.error || 'Could not create user.';
-          msg.className = 'msg msg-error visible';
-          btn.disabled = false;
-          btn.textContent = 'Add Employee';
-          return;
-        }
-
-        msg.innerHTML = `Account created for <strong>${escapeHtml(data.username)}</strong>. Share this temporary password with them now — it won't be shown again:<code>${escapeHtml(data.tempPassword)}</code>`;
-        msg.className = 'msg msg-success visible';
-        document.getElementById('newUsername').value = '';
-        document.getElementById('newIsAdmin').checked = false;
-        loadUsers();
-      } catch {
-        msg.textContent = 'Could not reach the server.';
-        msg.className = 'msg msg-error visible';
-      } finally {
-        btn.disabled = false;
-        btn.textContent = 'Add Employee';
-      }
-    });
-
-    (async () => {
-      try {
-        const res = await fetch('/api/session');
-        if (!res.ok) { window.location.href = '/employee-login.html'; return; }
-        const data = await res.json();
-        if (data.mustChangePassword) { window.location.href = '/change-password.html'; return; }
-        document.getElementById('welcome').textContent = 'Signed in as ' + data.username + (data.isAdmin ? ' (admin)' : '') + '.';
-
-        if (data.isAdmin) {
-          document.getElementById('userMgmtSection').style.display = 'block';
-          const listRes = await fetch('/api/admin/list-users');
-          if (listRes.ok) {
-            const listData = await listRes.json();
-            const me = listData.users.find(u => u.username === data.username);
-            if (me) currentUserId = me.id;
-          }
-          loadUsers();
-        }
-      } catch {
-        window.location.href = '/employee-login.html';
-      }
-    })();
-
-    document.getElementById('logoutBtn').addEventListener('click', async () => {
-      try { await fetch('/api/logout', { method: 'POST' }); } catch {}
-      window.location.href = '/employee-login.html';
+    document.addEventListener('pfp-session-ready', (e) => {
+      const usersCard = document.getElementById('usersCard');
+      if (usersCard && e.detail.isAdmin) usersCard.style.display = 'block';
     });
   </script>
 </body>
