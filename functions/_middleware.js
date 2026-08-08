@@ -1,6 +1,6 @@
 import { getCookie, getSessionUser } from './_lib/auth.js';
 
-const PROTECTED_PATHS = ['/dashboard.html', '/dashboard', '/chat.html', '/chat'];
+const PROTECTED_PATHS = ['/dashboard.html', '/dashboard', '/chat.html', '/chat', '/tasks.html', '/tasks', '/users.html', '/users'];
 const CHANGE_PASSWORD_PATH = '/change-password.html';
 const LOGIN_PATH = '/employee-login.html';
 
