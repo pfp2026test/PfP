@@ -4,30 +4,22 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Meeting — Pins for Palestine</title>
+<script src="https://cdn.srv.whereby.com/embed/v2-embed.js" type="module"></script>
 <style>
-  :root{ --bg:#121214; --red:#CE1126; }
+  :root{ --bg:#121214; }
   *{ margin:0; padding:0; box-sizing:border-box; }
-  html,body{ height:100%; overflow:hidden; }
-  body{ background:var(--bg); font-family:'Plus Jakarta Sans', sans-serif; display:flex; flex-direction:column; }
-  .bar{
-    display:flex; align-items:center; justify-content:space-between; padding:10px 18px;
-    background:#000; flex-shrink:0;
+  html,body{ height:100%; width:100%; overflow:hidden; }
+  body{ background:var(--bg); font-family:'Plus Jakarta Sans', sans-serif; }
+
+  whereby-embed{ position:fixed; inset:0; width:100vw; height:100vh; display:block; }
+
+  .error-box{
+    position:fixed; inset:0; display:flex; align-items:center; justify-content:center;
+    color:#ff9aa5; font-size:14px; padding:20px; text-align:center; background:var(--bg);
   }
-  .bar-title{ color:#fff; font-size:13.5px; font-weight:600; }
-  .leave-btn{
-    padding:8px 16px; border-radius:8px; border:1px solid rgba(255,255,255,0.14);
-    background:linear-gradient(135deg, #E31730 0%, var(--red) 55%, #A50E1F 100%); color:#fff;
-    font-size:13px; font-weight:600; cursor:pointer; text-decoration:none;
-  }
-  iframe{ flex:1; width:100%; border:none; }
-  .error-box{ flex:1; display:flex; align-items:center; justify-content:center; color:#ff9aa5; font-size:14px; padding:20px; text-align:center; }
 </style>
 </head>
 <body>
-  <div class="bar">
-    <span class="bar-title" id="meetingTitle">Meeting</span>
-    <a class="leave-btn" href="/meetings.html">Leave Meeting</a>
-  </div>
   <div id="callContainer">
     <div class="error-box">Loading meeting…</div>
   </div>
@@ -46,9 +38,6 @@
 
       const params = new URLSearchParams(window.location.search);
       const room = params.get('room');
-      const title = params.get('title');
-
-      if (title) document.getElementById('meetingTitle').textContent = title;
 
       const container = document.getElementById('callContainer');
       if (!room) {
@@ -56,11 +45,14 @@
         return;
       }
 
-      const iframe = document.createElement('iframe');
-      iframe.src = room;
-      iframe.allow = 'camera; microphone; fullscreen; display-capture; autoplay';
       container.innerHTML = '';
-      container.appendChild(iframe);
+      const embed = document.createElement('whereby-embed');
+      embed.setAttribute('room', room);
+      container.appendChild(embed);
+
+      embed.addEventListener('leave', () => {
+        window.location.href = '/meetings.html';
+      });
     })();
   </script>
 </body>
