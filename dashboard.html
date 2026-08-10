@@ -3,49 +3,59 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard — Pins for Palestine</title>
+<title>Mail — Pins for Palestine</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/shell.css">
 <style>
-  .content-inner{ position:relative; z-index:2; max-width:760px; margin:0 auto; padding:64px 32px; }
-  .eyebrow{ font-size:12.5px; font-weight:600; letter-spacing:0.2em; text-transform:uppercase; color:var(--text-dim); margin-bottom:14px; }
-  h1{ font-family:'Space Grotesk', sans-serif; font-weight:700; font-size:clamp(2rem, 5vw, 2.75rem); letter-spacing:-0.01em; margin-bottom:14px; }
-  .lead{ color:var(--text-dim); font-size:15px; line-height:1.6; margin-bottom:44px; max-width:520px; }
-  .quick-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:14px; }
-  .quick-card{
-    display:block; padding:20px; border-radius:14px; background:var(--glass-bg); border:1px solid var(--glass-border);
-    text-decoration:none; color:#f2f2f3; transition:border-color .15s ease, transform .15s ease;
-  }
-  .quick-card:hover{ border-color:rgba(255,255,255,0.2); transform:translateY(-2px); }
-  .quick-card h2{ font-family:'Space Grotesk', sans-serif; font-size:14.5px; font-weight:600; margin-bottom:6px; }
-  .quick-card p{ font-size:12.5px; color:var(--text-dim); line-height:1.5; }
+  .mail-layout{ display:flex; height:100%; }
 
-  .announcements-panel{ border-radius:16px; background:var(--glass-bg); border:1px solid var(--glass-border); padding:24px; margin-bottom:36px; }
-  .announcements-header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
-  .announcements-header h2{ font-family:'Space Grotesk', sans-serif; font-size:15px; font-weight:600; }
-  .new-announce-btn{
-    padding:8px 14px; border-radius:8px; border:1px solid rgba(255,255,255,0.14);
+  .mail-sidebar{ width:300px; flex-shrink:0; border-right:1px solid var(--glass-border); background:rgba(255,255,255,0.015); display:flex; flex-direction:column; }
+  .mail-sidebar-header{ padding:16px; border-bottom:1px solid var(--glass-border); display:flex; flex-direction:column; gap:10px; }
+  .mail-address{ font-size:12px; color:var(--text-dim); word-break:break-all; }
+  .compose-btn{
+    width:100%; padding:9px; border-radius:8px; border:1px solid rgba(255,255,255,0.14);
     background:linear-gradient(135deg, #E31730 0%, var(--red) 55%, #A50E1F 100%); color:#fff;
-    font-family:'Plus Jakarta Sans', sans-serif; font-size:12.5px; font-weight:600; cursor:pointer;
+    font-family:'Plus Jakarta Sans', sans-serif; font-size:13px; font-weight:600; cursor:pointer;
   }
-  .announce-item{ padding:14px 0; border-bottom:1px solid rgba(255,255,255,0.05); }
-  .announce-item:last-child{ border-bottom:none; }
-  .announce-top{ display:flex; align-items:center; gap:8px; margin-bottom:5px; }
-  .announce-title{ font-size:14px; font-weight:600; }
-  .pin-badge{
-    font-size:10px; font-weight:700; letter-spacing:0.04em; text-transform:uppercase; color:#4fce8a;
-    background:rgba(0,122,61,0.15); border:1px solid rgba(0,122,61,0.3); border-radius:5px; padding:1px 6px;
+  .msg-list{ flex:1; overflow-y:auto; }
+  .msg-item{ padding:12px 16px; cursor:pointer; border-bottom:1px solid rgba(255,255,255,0.03); }
+  .msg-item:hover{ background:rgba(255,255,255,0.03); }
+  .msg-item.active{ background:rgba(0,122,61,0.1); border-left:3px solid var(--green); padding-left:13px; }
+  .msg-from{ font-size:13px; font-weight:600; margin-bottom:2px; }
+  .msg-subject{ font-size:12.5px; color:rgba(242,242,243,0.8); margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .msg-snippet{ font-size:11.5px; color:var(--text-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+  .mail-pane{ flex:1; display:flex; flex-direction:column; min-width:0; overflow-y:auto; padding:32px; }
+  .empty-state{ flex:1; display:flex; align-items:center; justify-content:center; color:var(--text-dim); font-size:13.5px; }
+
+  .connect-box{ max-width:420px; margin:60px auto; text-align:center; }
+  .connect-box h2{ font-family:'Space Grotesk', sans-serif; font-size:18px; margin-bottom:10px; }
+  .connect-box p{ color:var(--text-dim); font-size:13.5px; margin-bottom:20px; line-height:1.6; }
+  .connect-box input{
+    width:100%; padding:10px 12px; border-radius:8px; background:rgba(255,255,255,0.04);
+    border:1px solid var(--glass-border); color:#f2f2f3; font-size:13.5px; margin-bottom:14px; outline:none;
   }
-  .announce-body{ font-size:13.5px; color:rgba(242,242,243,0.85); line-height:1.6; white-space:pre-wrap; margin-bottom:6px; }
-  .announce-meta{ font-size:11.5px; color:var(--text-dim); }
-  .announce-del{ font-size:11.5px; color:#ff9aa5; background:none; border:none; cursor:pointer; padding:0; margin-left:8px; }
-  .announce-del:hover{ text-decoration:underline; }
+  .connect-btn{
+    padding:10px 22px; border-radius:8px; border:1px solid rgba(255,255,255,0.14);
+    background:linear-gradient(135deg, #E31730 0%, var(--red) 55%, #A50E1F 100%); color:#fff;
+    font-size:13.5px; font-weight:600; cursor:pointer;
+  }
+
+  .msg-header{ border-bottom:1px solid var(--glass-border); padding-bottom:16px; margin-bottom:16px; }
+  .msg-header h2{ font-family:'Space Grotesk', sans-serif; font-size:18px; margin-bottom:8px; }
+  .msg-header-meta{ font-size:12.5px; color:var(--text-dim); }
+  .msg-body{ font-size:14px; line-height:1.7; white-space:pre-wrap; margin-bottom:24px; }
+  .reply-btn{
+    padding:9px 18px; border-radius:8px; border:1px solid rgba(255,255,255,0.14);
+    background:var(--glass-bg); color:#f2f2f3; font-size:13px; font-weight:600; cursor:pointer;
+  }
+  .disconnect-link{ font-size:11.5px; color:var(--text-dim); background:none; border:none; cursor:pointer; text-decoration:underline; padding:0; }
 
   .modal-overlay{ display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:20; align-items:center; justify-content:center; }
   .modal-overlay.visible{ display:flex; }
-  .modal{ width:100%; max-width:420px; margin:20px; padding:24px; border-radius:14px; background:#1a1a1d; border:1px solid var(--glass-border); }
+  .modal{ width:100%; max-width:460px; margin:20px; padding:24px; border-radius:14px; background:#1a1a1d; border:1px solid var(--glass-border); }
   .modal h3{ font-family:'Space Grotesk', sans-serif; font-size:16px; margin-bottom:14px; }
   .modal label{ display:block; font-size:11.5px; font-weight:600; text-transform:uppercase; color:var(--text-dim); margin-bottom:6px; letter-spacing:0.04em; }
   .modal input[type="text"], .modal textarea{
@@ -53,12 +63,16 @@
     border:1px solid var(--glass-border); color:#f2f2f3; font-size:13.5px; margin-bottom:14px; outline:none;
     font-family:'Plus Jakarta Sans', sans-serif;
   }
-  .modal textarea{ resize:vertical; min-height:80px; }
-  .modal-checkbox{ display:flex; align-items:center; gap:8px; margin-bottom:16px; font-size:13px; color:var(--text-dim); }
+  .modal textarea{ resize:vertical; min-height:140px; }
   .modal-actions{ display:flex; gap:10px; justify-content:flex-end; }
   .modal-actions button{ padding:8px 16px; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; border:1px solid var(--glass-border); }
   .modal-cancel{ background:transparent; color:var(--text-dim); }
-  .modal-create{ background:linear-gradient(135deg, #E31730, var(--red)); color:#fff; border-color:rgba(255,255,255,0.14); }
+  .modal-send{ background:linear-gradient(135deg, #E31730, var(--red)); color:#fff; border-color:rgba(255,255,255,0.14); }
+
+  .msg{ margin-top:12px; padding:10px 14px; border-radius:8px; font-size:13px; line-height:1.5; display:none; }
+  .msg.visible{ display:block; }
+  .msg-error{ background:rgba(206,17,38,0.1); border:1px solid rgba(206,17,38,0.35); color:#ff9aa5; }
+  .msg-success{ background:rgba(0,122,61,0.1); border:1px solid rgba(0,122,61,0.35); color:#8be3af; }
 </style>
 </head>
 <body>
@@ -73,6 +87,7 @@
         <a href="/tasks.html"><span>My Tasks</span></a>
         <a href="/chat.html"><span>Team Chat</span></a>
         <a href="/meetings.html"><span>Meetings</span></a>
+        <a href="/mail.html"><span>Mail</span></a>
         <a href="/users.html" id="navUserMgmt" style="display:none;"><span>User Management</span></a>
         <div class="nav-divider"></div>
         <a href="#" class="disabled-link"><span>Pin Requests</span><span class="soon-badge">Soon</span></a>
@@ -86,62 +101,31 @@
     </aside>
 
     <main class="content-area">
-      <div class="glow glow-green"></div>
-      <div class="glow glow-red"></div>
-      <div class="content-inner">
-        <p class="eyebrow">Internal</p>
-        <h1>Welcome back</h1>
-        <p class="lead">Jump into your tasks, catch up on team chat, or manage employee accounts using the sidebar.</p>
-
-        <div class="announcements-panel">
-          <div class="announcements-header">
-            <h2>Announcements</h2>
-            <button class="new-announce-btn" id="newAnnounceBtn" style="display:none;">+ Post Announcement</button>
-          </div>
-          <div id="announcementsList">
-            <p style="color:var(--text-dim); font-size:13px;">Loading…</p>
-          </div>
-        </div>
-
-        <div class="quick-grid">
-          <a class="quick-card" href="/tasks.html">
-            <h2>My Tasks</h2>
-            <p>See your assigned Jira issues in one place.</p>
-          </a>
-          <a class="quick-card" href="/chat.html">
-            <h2>Team Chat</h2>
-            <p>Main group chat and direct messages with your team.</p>
-          </a>
-          <a class="quick-card" href="/users.html" id="usersCard" style="display:none;">
-            <h2>User Management</h2>
-            <p>Add or remove employee accounts.</p>
-          </a>
-        </div>
-      </div>
+      <div id="mailRoot" class="mail-layout" style="display:none;"></div>
+      <div id="connectRoot"></div>
     </main>
   </div>
 
-  <div class="modal-overlay" id="modalOverlay">
+  <div class="modal-overlay" id="composeOverlay">
     <div class="modal">
-      <h3>Post an Announcement</h3>
-      <label for="announceTitleInput">Title</label>
-      <input type="text" id="announceTitleInput" placeholder="e.g. New pin toolkits arriving Friday">
-      <label for="announceBodyInput">Message</label>
-      <textarea id="announceBodyInput" placeholder="Details for the team…"></textarea>
-      <div class="modal-checkbox">
-        <input type="checkbox" id="announcePinnedInput" style="margin:0;">
-        <label for="announcePinnedInput" style="margin:0; text-transform:none; letter-spacing:0; font-size:13px;">Pin to the top</label>
-      </div>
+      <h3 id="composeTitle">New Email</h3>
+      <label for="composeTo">To</label>
+      <input type="text" id="composeTo" placeholder="someone@example.com">
+      <label for="composeSubject">Subject</label>
+      <input type="text" id="composeSubject" placeholder="Subject">
+      <label for="composeBody">Message</label>
+      <textarea id="composeBody" placeholder="Write your message…"></textarea>
+      <div class="msg" id="composeMsg"></div>
       <div class="modal-actions">
-        <button class="modal-cancel" id="modalCancelBtn">Cancel</button>
-        <button class="modal-create" id="modalCreateBtn">Post</button>
+        <button class="modal-cancel" id="composeCancelBtn">Cancel</button>
+        <button class="modal-send" id="composeSendBtn">Send</button>
       </div>
     </div>
   </div>
 
   <script src="/assets/shell.js"></script>
   <script>
-    let isAdmin = false;
+    let composeThreadInfo = null;
 
     function escapeHtml(str) {
       const div = document.createElement('div');
@@ -149,89 +133,179 @@
       return div.innerHTML;
     }
 
-    function timeAgo(iso) {
-      const d = new Date(iso + 'Z');
-      return d.toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+    function renderConnectPrompt(errorText) {
+      document.getElementById('mailRoot').style.display = 'none';
+      document.getElementById('connectRoot').innerHTML =
+        '<div class="connect-box">' +
+          '<h2>Connect Your PfP Email</h2>' +
+          '<p>Connect the Gmail account your official Pins for Palestine address forwards to. You\'ll approve access on Google\'s page, then land back here.</p>' +
+          (errorText ? '<div class="msg msg-error visible">' + escapeHtml(errorText) + '</div>' : '') +
+          '<input type="text" id="pfpAddressInput" placeholder="you@pinsforpalestine.org">' +
+          '<br><button class="connect-btn" id="connectGmailBtn">Connect Gmail</button>' +
+        '</div>';
+
+      document.getElementById('connectGmailBtn').addEventListener('click', () => {
+        const address = document.getElementById('pfpAddressInput').value.trim();
+        if (!address) { alert('Enter your official PfP email address first.'); return; }
+        window.location.href = '/api/gmail/connect?address=' + encodeURIComponent(address);
+      });
     }
 
-    async function loadAnnouncements() {
-      const listEl = document.getElementById('announcementsList');
+    function renderMailShell(address) {
+      document.getElementById('connectRoot').innerHTML = '';
+      const root = document.getElementById('mailRoot');
+      root.style.display = 'flex';
+      root.innerHTML =
+        '<div class="mail-sidebar">' +
+          '<div class="mail-sidebar-header">' +
+            '<div class="mail-address">' + escapeHtml(address) + '</div>' +
+            '<button class="compose-btn" id="composeNewBtn">+ New Email</button>' +
+          '</div>' +
+          '<div class="msg-list" id="msgList"><div style="padding:16px; color:var(--text-dim); font-size:13px;">Loading…</div></div>' +
+        '</div>' +
+        '<div class="mail-pane" id="mailPane"><div class="empty-state">Select a message to read it.</div></div>';
+
+      document.getElementById('composeNewBtn').addEventListener('click', () => openCompose());
+    }
+
+    async function loadInbox() {
       try {
-        const res = await fetch('/api/announcements/list');
+        const res = await fetch('/api/gmail/messages');
+        const data = await res.json();
+
+        if (!data.connected) {
+          renderConnectPrompt(data.error || null);
+          return;
+        }
+
+        renderMailShell(data.address);
+        const listEl = document.getElementById('msgList');
+
+        if (data.error) {
+          listEl.innerHTML = '<div style="padding:16px; color:#ff9aa5; font-size:13px;">' + escapeHtml(data.error) + '</div>';
+          return;
+        }
+        if (data.messages.length === 0) {
+          listEl.innerHTML = '<div style="padding:16px; color:var(--text-dim); font-size:13px;">No messages yet.</div>';
+          return;
+        }
+
+        listEl.innerHTML = data.messages.map(m =>
+          '<div class="msg-item" data-id="' + m.id + '">' +
+            '<div class="msg-from">' + escapeHtml(m.from) + '</div>' +
+            '<div class="msg-subject">' + escapeHtml(m.subject || '(no subject)') + '</div>' +
+            '<div class="msg-snippet">' + escapeHtml(m.snippet || '') + '</div>' +
+          '</div>'
+        ).join('');
+
+        listEl.querySelectorAll('.msg-item').forEach(el => {
+          el.addEventListener('click', () => openMessage(el.dataset.id, el));
+        });
+      } catch {
+        renderConnectPrompt('Could not reach the server.');
+      }
+    }
+
+    async function openMessage(id, el) {
+      document.querySelectorAll('.msg-item').forEach(item => item.classList.remove('active'));
+      if (el) el.classList.add('active');
+
+      const pane = document.getElementById('mailPane');
+      pane.innerHTML = '<div class="empty-state">Loading…</div>';
+
+      try {
+        const res = await fetch('/api/gmail/message?id=' + encodeURIComponent(id));
         const data = await res.json();
         if (!res.ok) {
-          listEl.innerHTML = '<p style="color:#ff9aa5; font-size:13px;">' + escapeHtml(data.error || 'Could not load.') + '</p>';
+          pane.innerHTML = '<div class="empty-state">' + escapeHtml(data.error || 'Could not load message.') + '</div>';
           return;
         }
-        if (data.announcements.length === 0) {
-          listEl.innerHTML = '<p style="color:var(--text-dim); font-size:13px;">No announcements yet.</p>';
-          return;
-        }
-        listEl.innerHTML = data.announcements.map(a => {
-          const pin = a.pinned ? '<span class="pin-badge">Pinned</span>' : '';
-          const del = isAdmin ? '<button class="announce-del" data-id="' + a.id + '">Delete</button>' : '';
-          return '<div class="announce-item">' +
-            '<div class="announce-top"><span class="announce-title">' + escapeHtml(a.title) + '</span>' + pin + '</div>' +
-            '<div class="announce-body">' + escapeHtml(a.body) + '</div>' +
-            '<div class="announce-meta">' + escapeHtml(a.created_by_username) + ' · ' + timeAgo(a.created_at) + del + '</div>' +
-          '</div>';
-        }).join('');
 
-        listEl.querySelectorAll('.announce-del').forEach(btn => {
-          btn.addEventListener('click', () => deleteAnnouncement(btn.dataset.id));
+        pane.innerHTML =
+          '<div class="msg-header">' +
+            '<h2>' + escapeHtml(data.subject || '(no subject)') + '</h2>' +
+            '<div class="msg-header-meta">From: ' + escapeHtml(data.from) + ' · ' + escapeHtml(data.date) + '</div>' +
+          '</div>' +
+          '<div class="msg-body">' + escapeHtml(data.body) + '</div>' +
+          '<button class="reply-btn" id="replyBtn">Reply</button>';
+
+        document.getElementById('replyBtn').addEventListener('click', () => {
+          const fromMatch = data.from.match(/<(.+)>/);
+          const replyTo = fromMatch ? fromMatch[1] : data.from;
+          openCompose({
+            to: replyTo,
+            subject: data.subject && data.subject.toLowerCase().startsWith('re:') ? data.subject : 'Re: ' + data.subject,
+            threadId: data.threadId,
+            inReplyTo: data.messageIdHeader,
+            references: data.messageIdHeader,
+          });
         });
       } catch {
-        listEl.innerHTML = '<p style="color:#ff9aa5; font-size:13px;">Could not reach the server.</p>';
+        pane.innerHTML = '<div class="empty-state">Could not reach the server.</div>';
       }
     }
 
-    async function deleteAnnouncement(id) {
-      if (!confirm('Delete this announcement?')) return;
-      try {
-        const res = await fetch('/api/announcements/delete', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ announcementId: Number(id) }),
-        });
-        if (res.ok) loadAnnouncements();
-      } catch {}
+    function openCompose(prefill) {
+      composeThreadInfo = prefill && prefill.threadId ? {
+        threadId: prefill.threadId, inReplyTo: prefill.inReplyTo, references: prefill.references
+      } : null;
+
+      document.getElementById('composeTitle').textContent = composeThreadInfo ? 'Reply' : 'New Email';
+      document.getElementById('composeTo').value = (prefill && prefill.to) || '';
+      document.getElementById('composeSubject').value = (prefill && prefill.subject) || '';
+      document.getElementById('composeBody').value = '';
+      document.getElementById('composeMsg').className = 'msg';
+      document.getElementById('composeOverlay').classList.add('visible');
     }
 
-    document.getElementById('newAnnounceBtn').addEventListener('click', () => {
-      document.getElementById('modalOverlay').classList.add('visible');
+    document.getElementById('composeCancelBtn').addEventListener('click', () => {
+      document.getElementById('composeOverlay').classList.remove('visible');
     });
-    document.getElementById('modalCancelBtn').addEventListener('click', () => {
-      document.getElementById('modalOverlay').classList.remove('visible');
-    });
-    document.getElementById('modalCreateBtn').addEventListener('click', async () => {
-      const title = document.getElementById('announceTitleInput').value.trim();
-      const body = document.getElementById('announceBodyInput').value.trim();
-      const pinned = document.getElementById('announcePinnedInput').checked;
-      if (!title || !body) { alert('Title and message are both required.'); return; }
+
+    document.getElementById('composeSendBtn').addEventListener('click', async () => {
+      const msg = document.getElementById('composeMsg');
+      msg.className = 'msg';
+      const to = document.getElementById('composeTo').value.trim();
+      const subject = document.getElementById('composeSubject').value.trim();
+      const message = document.getElementById('composeBody').value.trim();
+
+      if (!to || !subject || !message) {
+        msg.textContent = 'All fields are required.';
+        msg.className = 'msg msg-error visible';
+        return;
+      }
+
+      const payload = { to, subject, message };
+      if (composeThreadInfo) Object.assign(payload, composeThreadInfo);
+
       try {
-        const res = await fetch('/api/announcements/create', {
+        const res = await fetch('/api/gmail/send', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ title, body, pinned }),
+          body: JSON.stringify(payload),
         });
         const data = await res.json();
-        if (!res.ok) { alert(data.error || 'Could not post announcement.'); return; }
-        document.getElementById('modalOverlay').classList.remove('visible');
-        document.getElementById('announceTitleInput').value = '';
-        document.getElementById('announceBodyInput').value = '';
-        document.getElementById('announcePinnedInput').checked = false;
-        loadAnnouncements();
+        if (!res.ok) {
+          msg.textContent = data.error || 'Could not send.';
+          msg.className = 'msg msg-error visible';
+          return;
+        }
+        document.getElementById('composeOverlay').classList.remove('visible');
       } catch {
-        alert('Could not reach the server.');
+        msg.textContent = 'Could not reach the server.';
+        msg.className = 'msg msg-error visible';
       }
     });
 
-    document.addEventListener('pfp-session-ready', (e) => {
-      const usersCard = document.getElementById('usersCard');
-      if (usersCard && e.detail.isAdmin) usersCard.style.display = 'block';
-      isAdmin = !!e.detail.isAdmin;
-      if (isAdmin) document.getElementById('newAnnounceBtn').style.display = 'inline-block';
-      loadAnnouncements();
+    (function showUrlMessages() {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('gmail_connected') || params.get('gmail_error')) {
+        window.history.replaceState({}, '', window.location.pathname);
+      }
+    })();
+
+    document.addEventListener('pfp-session-ready', () => {
+      loadInbox();
     });
   </script>
 </body>
