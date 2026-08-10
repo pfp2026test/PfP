@@ -4,6 +4,7 @@ compatibility_date = "2025-01-01"
 
 [vars]
 JIRA_CLIENT_ID = "PZpkvPG2sY4HpJdyusjHfurkJL14aC6Z"
+GOOGLE_CLIENT_ID = "279726420508-kst1rqccsu55u4e659vc3elleh3tiqil.apps.googleusercontent.com"
 
 [[d1_databases]]
 binding = "DB"
