@@ -1,7 +1,7 @@
-import { getCookie, getSessionUser } from '../../_lib/auth.js';
+import { getCookie, getSessionUser, requireAdmin } from '../../_lib/auth.js';
 import { buildAuthorizeUrl } from '../../_lib/gmail.js';
 
-// GET /api/gmail/connect?address=you@pinsforpalestine.org
+// GET /api/gmail/connect?address=you@pinsforpalestine.org — admin only for now
 export async function onRequestGet(context) {
   const { request, env } = context;
   const db = env.DB;
@@ -12,6 +12,12 @@ export async function onRequestGet(context) {
   const user = await getSessionUser(db, sessionId);
   if (!user) {
     return Response.redirect(new URL('/employee-login.html', request.url), 302);
+  }
+  if (!user.is_admin) {
+    return Response.redirect(new URL('/dashboard.html', request.url), 302);
+  }
+  if (!user.is_admin) {
+    return Response.redirect(new URL('/dashboard.html', request.url), 302);
   }
 
   if (!address) {
