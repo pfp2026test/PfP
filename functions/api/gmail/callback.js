@@ -27,6 +27,12 @@ export async function onRequestGet(context) {
     return Response.redirect(mailUrl.toString(), 302);
   }
 
+  const stateUser = await db.prepare('SELECT is_admin FROM users WHERE id = ?').bind(stateRow.user_id).first();
+  if (!stateUser || !stateUser.is_admin) {
+    mailUrl.searchParams.set('gmail_error', 'not_authorized');
+    return Response.redirect(mailUrl.toString(), 302);
+  }
+
   try {
     const tokenData = await exchangeCodeForToken(env.GOOGLE_CLIENT_ID, env.GOOGLE_CLIENT_SECRET, code);
     const expiresAt = new Date(Date.now() + tokenData.expires_in * 1000).toISOString();
@@ -47,6 +53,10 @@ export async function onRequestGet(context) {
     mailUrl.searchParams.set('gmail_connected', '1');
     return Response.redirect(mailUrl.toString(), 302);
   } catch (err) {
+    mailUrl.searchParams.set('gmail_error', 'connect_failed');
+    return Response.redirect(mailUrl.toString(), 302);
+  }
+}
     mailUrl.searchParams.set('gmail_error', 'connect_failed');
     return Response.redirect(mailUrl.toString(), 302);
   }
