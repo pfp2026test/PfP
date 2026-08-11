@@ -1,13 +1,14 @@
-import { getCookie, getSessionUser, json } from '../../_lib/auth.js';
+import { getCookie, getSessionUser, requireAdmin, json } from '../../_lib/auth.js';
 import { refreshAccessToken, listMessages, getMessage } from '../../_lib/gmail.js';
 
 // GET /api/gmail/messages
 export async function onRequestGet(context) {
   const { request, env } = context;
   const db = env.DB;
-  const sessionId = getCookie(request, 'pfp_session');
-  const user = await getSessionUser(db, sessionId);
-  if (!user) return json({ error: 'Not authenticated.' }, { status: 401 });
+  const check = await requireAdmin(db, request);
+  if (check.error) return check.error;
+  const user = check.user;
+  if (!user.is_admin) return json({ error: 'Admin access required.' }, { status: 403 });
 
   const conn = await db
     .prepare('SELECT pfp_email_address, access_token, refresh_token, expires_at FROM gmail_connections WHERE user_id = ?')
