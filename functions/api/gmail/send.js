@@ -1,13 +1,14 @@
-import { getCookie, getSessionUser, json } from '../../_lib/auth.js';
+import { getCookie, getSessionUser, requireAdmin, json } from '../../_lib/auth.js';
 import { sendMessage } from '../../_lib/gmail.js';
 
 // POST /api/gmail/send  { to, subject, message, threadId?, inReplyTo?, references? }
 export async function onRequestPost(context) {
   const { request, env } = context;
   const db = env.DB;
-  const sessionId = getCookie(request, 'pfp_session');
-  const user = await getSessionUser(db, sessionId);
-  if (!user) return json({ error: 'Not authenticated.' }, { status: 401 });
+  const check = await requireAdmin(db, request);
+  if (check.error) return check.error;
+  const user = check.user;
+  if (!user.is_admin) return json({ error: 'Admin access required.' }, { status: 403 });
 
   let body;
   try {
@@ -38,6 +39,10 @@ export async function onRequestPost(context) {
       references: body.references,
     });
     return json({ ok: true, id: result.id });
+  } catch (err) {
+    return json({ error: 'Could not send: ' + (err && err.message ? err.message : String(err)) }, { status: 500 });
+  }
+}
   } catch (err) {
     return json({ error: 'Could not send: ' + (err && err.message ? err.message : String(err)) }, { status: 500 });
   }
