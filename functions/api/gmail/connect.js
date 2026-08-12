@@ -33,7 +33,7 @@ export async function onRequestGet(context) {
   await db
     .prepare('INSERT INTO gmail_oauth_states (state, user_id, pfp_email_address) VALUES (?, ?, ?)')
     .bind(state, user.id, address)
-    .run();
+    .run(); 
 
   const authorizeUrl = buildAuthorizeUrl(env.GOOGLE_CLIENT_ID, state);
   return Response.redirect(authorizeUrl, 302);
