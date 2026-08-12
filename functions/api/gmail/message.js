@@ -61,5 +61,5 @@ export async function onRequestGet(context) {
     });
   } catch (err) {
     return json({ error: 'Could not load message: ' + (err && err.message ? err.message : String(err)) }, { status: 500 });
-  }
+  } 
 }
