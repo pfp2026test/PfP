@@ -43,7 +43,3 @@ export async function onRequestPost(context) {
     return json({ error: 'Could not send: ' + (err && err.message ? err.message : String(err)) }, { status: 500 });
   }
 }
-  } catch (err) {
-    return json({ error: 'Could not send: ' + (err && err.message ? err.message : String(err)) }, { status: 500 });
-  }
-}
