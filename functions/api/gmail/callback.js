@@ -57,7 +57,3 @@ export async function onRequestGet(context) {
     return Response.redirect(mailUrl.toString(), 302);
   }
 }
-    mailUrl.searchParams.set('gmail_error', 'connect_failed');
-    return Response.redirect(mailUrl.toString(), 302);
-  }
-}
