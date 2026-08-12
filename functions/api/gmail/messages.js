@@ -62,4 +62,4 @@ export async function onRequestGet(context) {
       error: 'Could not load messages: ' + (err && err.message ? err.message : String(err)),
     });
   }
-}
+} 
