@@ -52,7 +52,7 @@ export async function onRequestGet(context) {
 
     mailUrl.searchParams.set('gmail_connected', '1');
     return Response.redirect(mailUrl.toString(), 302);
-  } catch (err) {
+  } catch (err) { 
     mailUrl.searchParams.set('gmail_error', 'connect_failed');
     return Response.redirect(mailUrl.toString(), 302);
   }
