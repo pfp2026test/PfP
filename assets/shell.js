@@ -24,6 +24,9 @@
       const adminLink = document.getElementById('navUserMgmt');
       if (adminLink) adminLink.style.display = data.isAdmin ? 'flex' : 'none';
 
+      const mailLink = document.getElementById('navMail');
+      if (mailLink) mailLink.style.display = data.isAdmin ? 'flex' : 'none';
+
       window.pfpSession = data;
       document.dispatchEvent(new CustomEvent('pfp-session-ready', { detail: data }));
     } catch {
