@@ -1,5 +1,5 @@
 import { getCookie, getSessionUser, requireAdmin } from '../../_lib/auth.js';
-import { buildAuthorizeUrl } from '../../_lib/gmail.js';
+import { buildAuthorizeUrl } from '../../_lib/gmail.js'; 
 
 // GET /api/gmail/connect?address=you@pinsforpalestine.org — admin only for now
 export async function onRequestGet(context) {
